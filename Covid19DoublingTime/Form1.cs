@@ -341,7 +341,13 @@ namespace Covid19DoublingTime
                     sb.Append(MainClass.DataFileName);
                     sb.Append(".");
 
-                    Wve.TextViewer.ShowText("About this program", sb.ToString());
+                    sb.Append(Environment.NewLine);
+                    sb.Append(Environment.NewLine);
+                    sb.Append("Source code is at GitHub at \r\n");
+                    sb.Append("https://github.com/weastridge/Covid19DoublingTime.git");
+
+
+                    Wve.TextViewer.ShowText("About this program...", sb.ToString());
                 }
                 catch (Exception er)
                 {
