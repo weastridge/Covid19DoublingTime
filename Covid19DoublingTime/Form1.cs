@@ -280,10 +280,27 @@ namespace Covid19DoublingTime
                         s4.MarkerColor = Color.Black;
                         //s4.IsVisibleInLegend = false;
 
+                        Series s5 = new Series("spread rate");
+                        //use defaults
+                        //s5.ChartType = SeriesChartType.Line;
+                        //s5.BorderWidth = 3;
+                        //s5.MarkerStyle = MarkerStyle.Circle;
+                        //s5.MarkerSize = 3;
+                        //s5.MarkerColor = Color.Black;
+                        //s5.IsVisibleInLegend = false;
+
+
+
                         chart4.Series.Add(s4);
                         for (int i = 0; i < doublingRow.Length; i++)
                         {
                             s4.Points.AddXY(i, doublingRow[i]);
+                        }
+
+                        chart4.Series.Add(s5);
+                        for (int i = 0; i < doublingRow.Length; i++)
+                        {
+                            s5.Points.AddXY(i, spreadRateRow[i]);
                         }
 
                         chart1.ChartAreas[0].RecalculateAxesScale();
