@@ -40,20 +40,37 @@ namespace Covid19DoublingTime
                     statusStrip1.LayoutStyle = ToolStripLayoutStyle.Flow;
 
                     //check if file exists
-                    FileInfo fi = new FileInfo(MainClass.DataFileName);
+                    FileInfo fi = new FileInfo(MainClass.DataFileNameforCountries);
                     if (!fi.Exists)
                     {
                         MessageBox.Show("Hi.  I don't see the data file we're looking for, named \r\n" +
-                            MainClass.DataFileName +
+                            MainClass.DataFileNameforCountries +
                             ".  Please see Tools, About to see who to load that from the Internet.  ");
                         return;
                     }
                     loadData();
                     //load combobox
+                    //IX in row of place and subplace
+                    int placeNameIX = 1;
+                    int subplaceNameIx = 0;
+
+                    switch(MainClass.TypeOfData)
+                    {
+                        case "Hopkins_World":
+                            placeNameIX = 1;
+                            subplaceNameIx = 0;
+                            break;
+                        case "Hopkins_US":
+                            placeNameIX = 6;
+                            subplaceNameIx = 5;
+                            break;
+                        default:
+                            break;
+                    }
                     for(int i=0; i<MainClass.CovidDataSet.Length; i++)
                     {
                         comboBoxPlaces.Items.Add(new MainClass.DataPlace(
-                            MainClass.CovidDataSet[i][0], MainClass.CovidDataSet[i][1], i));
+                            MainClass.CovidDataSet[i][subplaceNameIx], MainClass.CovidDataSet[i][placeNameIX], i));
                     }
                     if(comboBoxPlaces.Items.Count > 0)
                     {
@@ -76,15 +93,15 @@ namespace Covid19DoublingTime
         private void loadData()
         {
             //check if file exists
-            FileInfo fi = new FileInfo(MainClass.DataFileName);
+            FileInfo fi = new FileInfo(MainClass.DataFileNameforCountries);
             if (!fi.Exists)
             {
                 MessageBox.Show("Hi.  I don't see the data file we're looking for, named \r\n" +
-                    MainClass.DataFileName +
+                    MainClass.DataFileNameforCountries +
                     ".  Please see Tools, About to see who to load that from the Internet.  ");
                 return;
             }
-            using (System.IO.StreamReader sr = new StreamReader(MainClass.DataFileName))
+            using (System.IO.StreamReader sr = new StreamReader(MainClass.DataFileNameforCountries))
             {
                 MainClass.CovidDataSet = new string[1000][];
                 string[] parts;
@@ -134,10 +151,23 @@ namespace Covid19DoublingTime
                 {
                     if (comboBoxPlaces.SelectedItem != null)
                     {
-                        int firstDataColIX = 4; //fifth col starts data
+                        int firstDataColIX = int.MinValue; //zero based index if first column containing data   
                         MainClass.DataPlace place = (MainClass.DataPlace)comboBoxPlaces.SelectedItem;
                         string outputFileName = MainClass.DefaultOutputName.Replace("XXX", place.SubPlace + place.Place);
                         string[] stringCasesRow = MainClass.CovidDataSet[place.Index];
+                        
+                        switch(MainClass.TypeOfData) // == "Hopkins_World")
+                        {
+                            case "Hopkins_World":
+                                firstDataColIX = 4; //fifth col starts data
+                                break;
+                            case "Hopkins_US":
+                                firstDataColIX = 11; //12th col starts data
+                                break;
+                            default:
+                                break;
+                        }
+                        
                         double[] casesRow = new double[stringCasesRow.Length - firstDataColIX];
                         for (int i = 0; i < casesRow.Length; i++)
                         {
@@ -146,7 +176,6 @@ namespace Covid19DoublingTime
                         double[] logRow = (double[])casesRow.Clone();
                         //initialize  with zeros
                         double[] doublingRow = (double[])casesRow.Clone();
-                        //data starts at fifth row
                         for (int i = 0; i < doublingRow.Length; i++)
                         {
                             doublingRow[i] = 0;
@@ -355,7 +384,7 @@ namespace Covid19DoublingTime
                     sb.Append(Environment.NewLine);
                     sb.Append(Environment.NewLine);
                     sb.Append(" The data must be copied and saved with the name ");
-                    sb.Append(MainClass.DataFileName);
+                    sb.Append(MainClass.DataFileNameforCountries);
                     sb.Append(".");
 
                     sb.Append(Environment.NewLine);
@@ -371,6 +400,12 @@ namespace Covid19DoublingTime
                     Wve.MyEr.Show(this, er, true);
                 }
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            String s = MainClass.SendRequest("GET", "", null,
+                "https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv");
         }
     }
 }

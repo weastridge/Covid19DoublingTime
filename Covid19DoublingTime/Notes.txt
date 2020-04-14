@@ -4,8 +4,13 @@ Data comes from Johns Hopkins Coronavirus COVID-19 Global Cases by the Center fo
 https://www.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6
 and in particular, from their daily updated dataset at github
 https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series
+global:  https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv
+US:  https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv
+
  (was: ) https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data
 
  working on Setup project;  I clicked "add shortcut to project folder" by mistake, took it out but it still installs with adding a Covid19DoublingTime item to the user's Programs Menu, which opens the whole program menus folder and confuses the user.  Not sure how to take that out since it doesn't show in the file system on the Setup program's view;  I guess I could just delete it and make an new Setup project.
 
  todo:  Make settings form and config file so can choose other data sources, such as states, too.   Figure a better way to download the csv file from Johns Hopkinds github, or maybe let my program import from clipboard.
+
+ //todo:  let http post load and save the data files
