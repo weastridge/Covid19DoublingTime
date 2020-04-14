@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +34,8 @@ namespace Covid19DoublingTime
                     if((!_ignoreChangeEvents) && (listBoxTypeOfData.SelectedItem != null))
                     {
                         MainClass.TypeOfData = listBoxTypeOfData.SelectedItem.ToString();
+                        //reload main form
+                        //Form1.ReloadForm1(sender, e);
                     }
                 }
                 catch (Exception er)
@@ -75,6 +78,62 @@ namespace Covid19DoublingTime
                     _ignoreChangeEvents = false;
                 }
             }
+        }
+
+        private void buttonDownload_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //get data
+                string url = string.Empty;
+                string outputFileName = string.Empty;
+                switch (MainClass.TypeOfData)
+                {
+                    case "Hopkins_World":
+                        url = MainClass.DataUrlForCountries;
+                        outputFileName = MainClass.DataFileNameforCountries;
+                        break;
+                    case "Hopkins_US":
+                        url = MainClass.DataUrlForStates;
+                        outputFileName = MainClass.DataFileNameForStates;
+                        break;
+                }
+                string dataRaw = MainClass.SendRequest("GET", "", null, url);
+                //write to file
+                DirectoryInfo di = new DirectoryInfo(@"c:\covid19");
+                if(!di.Exists)
+                {
+                    di.Create();
+                }
+                //rename old data if exists
+
+                FileInfo fi = new FileInfo(outputFileName);
+                if(fi.Exists)
+                {
+                    if(File.Exists(outputFileName + ".old"))
+                    {
+                        File.Delete(outputFileName + ".old");
+                    }
+                    fi.MoveTo(outputFileName + ".old");
+                }
+                //write to file
+                using (StreamWriter sw = new StreamWriter(outputFileName,
+                       false)) //false to append
+                {
+                    sw.Write(dataRaw);
+                    sw.Flush();
+                }
+                MessageBox.Show("Downloaded " + outputFileName);
+            }
+            catch (Exception er)
+            {
+                Wve.MyEr.Show(this, er, true);
+            }
+        }
+
+        private void buttonClose_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.OK;
         }
     }
 }

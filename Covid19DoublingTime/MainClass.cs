@@ -19,9 +19,19 @@ namespace Covid19DoublingTime
         /// </summary>
         internal static string DataFileNameforCountries = @"c:\Covid19\time_series_covid19_confirmed_global.csv";
         /// <summary>
+        /// url to get data from for global
+        /// </summary>
+        internal static string DataUrlForCountries = 
+            "https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
+        /// <summary>
         /// name of the datafile for US
         /// </summary>
         internal static string DataFileNameForStates = @"c:\covid19\time_series_covid19_confirmed_US.csv";
+        /// <summary>
+        /// url to get data for US
+        /// </summary>
+        internal static string DataUrlForStates = 
+            "https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv";
         /// <summary>
         /// default name, with XXX to be replaced by place name
         /// </summary>
