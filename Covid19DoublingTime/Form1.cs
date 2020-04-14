@@ -123,6 +123,12 @@ namespace Covid19DoublingTime
                                 foundIt = true;
                                 break;
                             }
+                            else if(((MainClass.DataPlace)o).Place.Trim() == "Tennessee")
+                            {
+                                comboBoxPlaces.SelectedItem = o;
+                                foundIt = true;
+                                break;
+                            }
                         }
                         if (!foundIt)
                         {
@@ -244,7 +250,7 @@ namespace Covid19DoublingTime
                             }
                             if (i > MainClass.IncubationDays)
                             {
-                                if (newCasesRow[i - MainClass.IncubationDays] != 0)
+                                if (newCasesRow[i - MainClass.IncubationDays] > 0)
                                 {
                                     spreadRateRow[i] = newCasesRow[i] / newCasesRow[i - MainClass.IncubationDays];
                                 }
@@ -445,7 +451,10 @@ namespace Covid19DoublingTime
                 try
                 {
                     SettingsForm dlg = new SettingsForm();
-                    dlg.ShowDialog();
+                    if(dlg.ShowDialog() == DialogResult.OK)
+                    {
+                        Form1_Load(sender, e);
+                    }
                 }
                 catch (Exception er)
                 {
