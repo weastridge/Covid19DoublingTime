@@ -427,29 +427,8 @@ namespace Covid19DoublingTime
             {
                 try
                 {
-
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append("To calculate and display the doubling rate of Covid-19 cases in the U.S. as a function of time \r\n" +
-
-                    "Data comes from Johns Hopkins Coronavirus COVID - 19 Global Cases by the Center for Systems Science and Engineering(CSSE) at Johns Hopkins University(JHU) \r\n" +
-                    "  https://www.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6 \r\n" +
-                    "and in particular, from their daily updated dataset at github \r\n " +
-                    " https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series \r\n");
-                    // was "  https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data \r\n");
-
-                    sb.Append(Environment.NewLine);
-                    sb.Append(Environment.NewLine);
-                    sb.Append(" The global data must be saved with the name ");
-                    sb.Append(MainClass.DataFileNameforCountries);
-                    sb.Append(".");
-
-                    sb.Append(Environment.NewLine);
-                    sb.Append(Environment.NewLine);
-                    sb.Append("Source code is at GitHub at \r\n");
-                    sb.Append("https://github.com/weastridge/Covid19DoublingTime.git");
-
-
-                    Wve.TextViewer.ShowText("About this program...", sb.ToString());
+                    AboutForm dlg = new AboutForm();
+                    dlg.ShowDialog();
                 }
                 catch (Exception er)
                 {
