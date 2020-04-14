@@ -99,7 +99,7 @@ namespace Covid19DoublingTime
                     {
                         MessageBox.Show("Hi.  I don't see the data file we're looking for, named \r\n" +
                             dataFileName +
-                            ".  Please see Tools, About to see who to load that from the Internet.  ");
+                            ".  Please see Tools, Settings to see how to load that from the Internet.  ");
                         return;
                     }
                     loadData(dataFileName);
