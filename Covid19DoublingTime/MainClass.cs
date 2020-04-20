@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -135,6 +136,60 @@ namespace Covid19DoublingTime
                 throw new Exception(" Error posting request:  " +
                     "address must start with http(s)");
             }
+        }
+
+        //least squares functions:  Find a linear least squares fit for a set of points in C#
+        //Posted on October 30, 2014 by Rod Stephens
+        // http://csharphelper.com/blog/2014/10/find-a-linear-least-squares-fit-for-a-set-of-points-in-c/
+
+        /// <summary>
+        /// Return the error squared.
+        /// </summary>
+        /// <param name="points"></param>
+        /// <param name="m"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static double ErrorSquared(List<PointF> points,
+            double m, double b)
+        {
+            double total = 0;
+            foreach (PointF pt in points)
+            {
+                double dy = pt.Y - (m * pt.X + b);
+                total += dy * dy;
+            }
+            return total;
+        }
+        /// <summary>
+        /// Find the least squares linear fit. Return the total error.
+        /// </summary>
+        /// <param name="points"></param>
+        /// <param name="m"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static double FindLinearLeastSquaresFit(
+            List<PointF> points, out double m, out double b)
+        {
+            // Perform the calculation.
+            // Find the values S1, Sx, Sy, Sxx, and Sxy.
+            double S1 = points.Count;
+            double Sx = 0;
+            double Sy = 0;
+            double Sxx = 0;
+            double Sxy = 0;
+            foreach (PointF pt in points)
+            {
+                Sx += pt.X;
+                Sy += pt.Y;
+                Sxx += pt.X * pt.X;
+                Sxy += pt.X * pt.Y;
+            }
+
+            // Solve for m and b.
+            m = (Sxy * S1 - Sx * Sy) / (Sxx * S1 - Sx * Sx);
+            b = (Sxy * Sx - Sy * Sxx) / (Sx * Sx - S1 * Sxx);
+
+            return Math.Sqrt(ErrorSquared(points, m, b));
         }
 
         #endregion methods

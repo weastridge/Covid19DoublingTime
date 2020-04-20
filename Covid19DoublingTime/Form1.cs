@@ -192,8 +192,35 @@ namespace Covid19DoublingTime
 
         private void buttonGo_Click(object sender, EventArgs e)
         {
-            calculateAndDisplay();
-            
+            using (Wve.HourglassCursor waitCursor = new Wve.HourglassCursor())
+            {
+                try
+                {
+                    List<PointF> points = new List<PointF>()
+                    {
+                        new PointF(5, -0.15f),
+                        new PointF(6, -0.13f),
+                        new PointF(7, -0.11f),
+                        new PointF(8, -0.09f),
+                        new PointF(9, -0.07f),
+                        new PointF(10, -0.05f),
+                        new PointF(11, -0.03f),
+                        new PointF(12, -0.01f),
+                        new PointF(13, 0.01f),
+                        new PointF(14, 0.03f)
+                    };
+                    double m;
+                    double b;
+                    MainClass.FindLinearLeastSquaresFit(points, out m, out b);
+                    MessageBox.Show("m=" + m.ToString() + ", b=" + b.ToString() +
+                        "\r\nand if x=10 then y=" + (m * 10 + b).ToString()
+                        ) ;
+                }
+                catch (Exception er)
+                {
+                    Wve.MyEr.Show(this, er, true);
+                }
+            }
         }
 
         private void calculateAndDisplay()
@@ -236,25 +263,69 @@ namespace Covid19DoublingTime
                         {
                             doublingRow[i] = 0;
                         }
+                        //doubling rate row calculated from last t days of exponential growth
+                        double[] doublingExpRow = (double[])doublingRow.Clone();
                         double[] newCasesRow = (double[])doublingRow.Clone();
-                        double[] spreadRateRow = (double[])doublingRow.Clone();
+                        //reproduction rate comparing raw linear rate over t days of median incubation period
+                        double[] reproRateRow = (double[])doublingRow.Clone();
+                        //reproduction rate comparing logarithmic growth rate
+                        double[] reproRateExpRow = (double[])doublingRow.Clone();
+                        List<PointF> points; //for calculating logarithmic growth past (incubationdays) days.
+                        double m; //slope of log rate
+                        double b; //b intercept of log least squares fit
+                        double priorCases = int.MaxValue; //number of cases one incubation period ago
 
                         //calculate
                         double casesRef = 0; //the number of cases we are looking to double after so many days
                         for (int i = 0; i < casesRow.Length; i++)
                         {
+                            //log
                             logRow[i] = casesRow[i] > 0 ? Math.Log10(casesRow[i]) : 0;
+                            //new cases
                             if (i > 0)
                             {
                                 newCasesRow[i] = casesRow[i] - casesRow[i - 1];
                             }
-                            if (i > MainClass.IncubationDays)
+                            if (i > MainClass.IncubationDays - 1)
                             {
-                                if (newCasesRow[i - MainClass.IncubationDays] > 0)
+
+
+
+                                //**********************
+                                // this can't be right;  would say repro rate is 1 if all new cases stop
+
+
+
+                                //calculate logarithmic growth rate
+                                points = new List<PointF>(MainClass.IncubationDays);
+                                for(int j=0; j<MainClass.IncubationDays; j++)
                                 {
-                                    spreadRateRow[i] = newCasesRow[i] / newCasesRow[i - MainClass.IncubationDays];
+                                    points.Add( new PointF(j, (float)logRow[i - (MainClass.IncubationDays - 1) + j]));
                                 }
-                            }
+                                MainClass.FindLinearLeastSquaresFit(points, out m, out b);
+                                // per wiki https://en.wikipedia.org/wiki/Basic_reproduction_number
+                                // r(zero) = exp (K*tau) where K is logaritmic growth rate we call m and tau is infectivity period we call Incubation days
+                                reproRateExpRow[i] = Math.Exp(m * MainClass.IncubationDays);
+                                //and doubling time is ln(2)/K
+                                doublingExpRow[i] = Math.Log(2) / m;
+
+
+
+                                //****************************
+
+                                //repro rate
+                                if (i > MainClass.IncubationDays + 1)
+                                {
+                                    priorCases = (newCasesRow[i - MainClass.IncubationDays - 1] +
+                                        newCasesRow[i - MainClass.IncubationDays] +
+                                        newCasesRow[i - MainClass.IncubationDays + 1]) / 3;
+                                    if (priorCases > 0)
+                                    {
+                                        reproRateRow[i] = newCasesRow[i] / priorCases;
+                                    }
+                                }// from if i > incubation days + 1
+                            }// from if if i > incubation days - 1
+
 
                             //i is the row we are counting from to find next doubling
                             casesRef = casesRow[i];
@@ -266,7 +337,7 @@ namespace Covid19DoublingTime
                                     //break;
                                 }
                             }
-                        }
+                        }// from for each day
 
                         //write to file
                         using (StreamWriter sw = new StreamWriter(outputFileName,
@@ -279,26 +350,35 @@ namespace Covid19DoublingTime
                             string[] strDoubling = new string[casesRow.Length + 1];
                             string[] strLog = new string[casesRow.Length + 1];
                             string[] strNewCases = new string[casesRow.Length + 1];
-                            string[] strSpreadRate = new string[casesRow.Length + 1];
+                            string[] strReproRate = new string[casesRow.Length + 1];
+                            string[] strDoublingExp = new string[casesRow.Length + 1];
+                            string[] strReproRateExp = new string[casesRow.Length + 1];
+
                             strCases[0] = "Cases";
                             strDoubling[0] = "DoublingTime";
                             strLog[0] = "Log";
                             strNewCases[0] = "NewCases";
-                            strSpreadRate[0] = "Spread";
+                            strReproRate[0] = "ReproRate";
+                            strDoublingExp[0] = "DoublingExp";
+                            strReproRateExp[0] = "ReproRateExp";
                             for (int i = 0; i < casesRow.Length; i++)
                             {
                                 strCases[i + 1] = string.Format(String.Format("{0:0.#}", casesRow[i]));
                                 strDoubling[i + 1] = string.Format(String.Format("{0:0.#}", doublingRow[i]));
                                 strLog[i + 1] = string.Format(String.Format("{0:0.#}", logRow[i]));
                                 strNewCases[i + 1] = string.Format(String.Format("{0:0.#}", newCasesRow[i]));
-                                strSpreadRate[i + 1] = string.Format(String.Format("{0:0.#}", spreadRateRow[i]));
+                                strReproRate[i + 1] = string.Format(String.Format("{0:0.#}", reproRateRow[i]));
+                                strDoublingExp[i + 1] = string.Format(String.Format("{0:0.#}", doublingExpRow[i]));
+                                strReproRateExp[i + 1] = string.Format(String.Format("{0:0.#}", reproRateExpRow[i]));
                             }
                             sw.WriteLine(Wve.WveTools.WriteCsv(datesRow, false, false, false));  // row, last comma, force quotes, newline
                             sw.WriteLine(Wve.WveTools.WriteCsv(strCases, false, false, false));  // row, last comma, force quotes, newline
                             sw.WriteLine(Wve.WveTools.WriteCsv(strDoubling, false, false, false));  // row, last comma, force quotes, newline
+                            sw.WriteLine(Wve.WveTools.WriteCsv(strDoublingExp, false, false, false));  // row, last comma, force quotes, newline
                             sw.WriteLine(Wve.WveTools.WriteCsv(strLog, false, false, false));  // row, last comma, force quotes, newline
                             sw.WriteLine(Wve.WveTools.WriteCsv(strNewCases, false, false, false));  // row, last comma, force quotes, newline
-                            sw.WriteLine(Wve.WveTools.WriteCsv(strSpreadRate, false, false, false));  // row, last comma, force quotes, newline
+                            sw.WriteLine(Wve.WveTools.WriteCsv(strReproRate, false, false, false));  // row, last comma, force quotes, newline
+                            sw.WriteLine(Wve.WveTools.WriteCsv(strReproRateExp, false, false, false));  // row, last comma, force quotes, newline
                             sw.Flush();
                         }
                         MessageBox.Show("wrote file " + outputFileName);
@@ -308,6 +388,7 @@ namespace Covid19DoublingTime
                         chart2.Series.Clear();
                         chart3.Series.Clear();
                         chart4.Series.Clear();
+                        chart5.Series.Clear();
                         //chart1.ChartAreas.Clear();
                         //chart2.ChartAreas.Clear();
                         //chart3.ChartAreas.Clear();
@@ -329,12 +410,14 @@ namespace Covid19DoublingTime
                         }
 
 
-                        Series s2 = new Series("log");
-                        s2.ChartType = SeriesChartType.Line;
-                        s2.BorderWidth = 3;
-                        s2.MarkerStyle = MarkerStyle.Circle;
-                        s2.MarkerSize = 3;
-                        s2.MarkerColor = Color.Black;
+                        Series s2 = new Series("log")
+                        {
+                            ChartType = SeriesChartType.Line,
+                            BorderWidth = 3,
+                            MarkerStyle = MarkerStyle.Circle,
+                            MarkerSize = 3,
+                            MarkerColor = Color.Black
+                        };
                         //s2.IsVisibleInLegend = false;
 
                         chart3.Series.Add(s2);
@@ -365,7 +448,7 @@ namespace Covid19DoublingTime
                         s4.MarkerColor = Color.Black;
                         //s4.IsVisibleInLegend = false;
 
-                        Series s5 = new Series("spread rate");
+                        Series s5 = new Series("repro rate");
                         //use defaults
                         //s5.ChartType = SeriesChartType.Line;
                         //s5.BorderWidth = 3;
@@ -385,17 +468,38 @@ namespace Covid19DoublingTime
                         chart4.Series.Add(s5);
                         for (int i = 0; i < doublingRow.Length; i++)
                         {
-                            s5.Points.AddXY(i, spreadRateRow[i]);
+                            s5.Points.AddXY(i, reproRateRow[i]);
                         }
+
+
+                        Series s6 = new Series("doubling exp");
+                        s6.ChartType = SeriesChartType.Line;
+                        s6.BorderWidth = 3;
+                        s6.MarkerStyle = MarkerStyle.Circle;
+                        s6.MarkerSize = 3;
+                        s6.MarkerColor = Color.Black;
+                        //s6.IsVisibleInLegend = false;
+                        Series s7 = new Series("repro rate exp");
+                        chart5.Series.Add(s6);
+                        chart5.Series.Add(s7);
+                        for (int i = 0; i < doublingRow.Length; i++)
+                        {
+                            //display -1 for out of range
+                            s6.Points.AddXY(i, (doublingExpRow[i] >= 0 && doublingExpRow[i] <= 30) ? doublingExpRow[i] : -1);
+                            s7.Points.AddXY(i, reproRateExpRow[i]);
+                        }
+
 
                         chart1.ChartAreas[0].RecalculateAxesScale();
                         chart2.ChartAreas[0].RecalculateAxesScale();
                         chart3.ChartAreas[0].RecalculateAxesScale();
                         chart4.ChartAreas[0].RecalculateAxesScale();
+                        chart5.ChartAreas[0].RecalculateAxesScale();
 
                         statusStrip1.Items[0].Text = "Calculated, last data date is " + lastDate;
                     }
                 }
+                
                 
                 catch (Exception er)
                 {
