@@ -38,16 +38,19 @@ namespace Covid19DoublingTime
                     sb.Append(Environment.NewLine);
                     sb.Append(" The global data must be saved with the name ");
                     sb.Append(MainClass.DataFileNameforCountries);
-                    sb.Append(".");
+                    sb.Append(".  Tools, settings lets you do that automatically.");
 
                     sb.Append("\r\n\r\n");
                     sb.Append("This is a work in progress.  I mainly wanted to see the doubling time, ");
                     sb.Append("that is, the number of days it took to reach the cases total from half the total.");
                     sb.Append("\r\nAlso interesting is the spread rate, i.e. the number of people each case spreads to.  ");
-                    sb.Append("I don't have a sophisticated way to calculate that.  I just took the median incubation ");
+                    sb.Append("  I just took the median incubation ");
                     sb.Append("period of 5 days and divided each daily new cases by the new cases 5 days prior.  ");
-                    sb.Append("If somebody knows a better way, please let me know.  ");
+                    sb.Append("\r\nThe similar graph below it shows the same entities (doubling rate, effective reproductive rate),  ");
+                    sb.Append("but calculated from the slope of the log curve the prior 5 days, so is more accurate ");
+                    sb.Append("during exponential growth, and also less prone to aberrencies from day to day variability.  ");
                     sb.Append("\r\nThe hope is, if we can keep that spread rate below 1, the infection dies out. ");
+                    sb.Append("\r\n\r\nThe data calculated in comma separated value format is saved to disk in the same folder as the downloaded data.");
 
                     sb.Append(Environment.NewLine);
                     sb.Append(Environment.NewLine);

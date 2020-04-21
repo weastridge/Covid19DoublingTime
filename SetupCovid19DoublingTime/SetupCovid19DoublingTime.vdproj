@@ -151,6 +151,11 @@
             "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
                 "ScatterAssemblies"
                 {
+                    "_3DF3E70D025A82A1F4F48C9D3E8660C8"
+                    {
+                    "Name" = "8:System.Net.Http.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:System.Net.Http.dll"
             "TargetName" = "8:"
@@ -177,6 +182,11 @@
             "AssemblyAsmDisplayName" = "8:Wve, Version=1.1.1.1, Culture=neutral, PublicKeyToken=e8725e31076b13cd, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_B071FF5717A0495BFC46676776906DC2"
+                    {
+                    "Name" = "8:Wve.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Wve.dll"
             "TargetName" = "8:"
@@ -263,15 +273,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Covid19DoublingTime"
-        "ProductCode" = "8:{9195CBC5-0981-418E-B93D-386DF877B483}"
-        "PackageCode" = "8:{05669967-A2EA-4E81-8862-60DACDFF5590}"
+        "ProductCode" = "8:{BD6AF49C-0E23-4AD6-92CC-6BBFAC4F3BA1}"
+        "PackageCode" = "8:{E4E2FDE7-B08E-41EF-84A6-8A855C87788A}"
         "UpgradeCode" = "8:{1C4DA1A0-3C9E-477D-8433-F0E136E09E40}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.12"
+        "ProductVersion" = "8:1.0.13"
         "Manufacturer" = "8:EastRidges Medical Software"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

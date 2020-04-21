@@ -305,9 +305,11 @@ namespace Covid19DoublingTime
                                 MainClass.FindLinearLeastSquaresFit(points, out m, out b);
                                 // per wiki https://en.wikipedia.org/wiki/Basic_reproduction_number
                                 // r(zero) = exp (K*tau) where K is logaritmic growth rate we call m and tau is infectivity period we call Incubation days
-                                reproRateExpRow[i] = Math.Exp(m * MainClass.IncubationDays);
+                                //reproRateExpRow[i] = Math.Exp(m * MainClass.IncubationDays);
+                                reproRateExpRow[i] = Math.Pow(10, m * MainClass.IncubationDays);
                                 //and doubling time is ln(2)/K
-                                doublingExpRow[i] = Math.Log(2) / m;
+                                //doublingExpRow[i] = Math.Log(2) / m;
+                                doublingExpRow[i] = Math.Log10(2) / m;
 
 
 
