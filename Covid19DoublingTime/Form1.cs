@@ -292,7 +292,7 @@ namespace Covid19DoublingTime
 
 
                                 //**********************
-                                // this can't be right;  would say repro rate is 1 if all new cases stop
+                                // alternate calculation of doubling time and repro rate during exponential growth
 
 
 
@@ -386,6 +386,7 @@ namespace Covid19DoublingTime
                         MessageBox.Show("wrote file " + outputFileName);
 
                         //now graphs
+                        DataPoint pt;
                         chart1.Series.Clear();
                         chart2.Series.Clear();
                         chart3.Series.Clear();
@@ -406,9 +407,12 @@ namespace Covid19DoublingTime
                         //s.IsVisibleInLegend = false;
 
                         chart1.Series.Add(s);
-                        for (int i = 0; i < casesRow.Length; i++)
+                        for (int i = 1; i < casesRow.Length; i++)
                         {
-                            s.Points.AddXY(i, casesRow[i]);
+                            // s.Points.AddXY(i, casesRow[i]);
+                            pt = new DataPoint(i, casesRow[i]);
+                            pt.AxisLabel = stringHeaderRow[i + firstDataColIX];
+                            s.Points.Add(pt);
                         }
 
 
@@ -423,9 +427,12 @@ namespace Covid19DoublingTime
                         //s2.IsVisibleInLegend = false;
 
                         chart3.Series.Add(s2);
-                        for (int i = 0; i < logRow.Length; i++)
+                        for (int i = 1; i < logRow.Length; i++)
                         {
-                            s2.Points.AddXY(i, logRow[i]);
+                            //s2.Points.AddXY(i, logRow[i]);
+                            pt = new DataPoint(i, logRow[i]);
+                            pt.AxisLabel = stringHeaderRow[i + firstDataColIX];
+                            s2.Points.Add(pt);
                         }
 
                         Series s3 = new Series("new cases");
@@ -437,9 +444,12 @@ namespace Covid19DoublingTime
                         //.IsVisibleInLegend = false;
 
                         chart2.Series.Add(s3);
-                        for (int i = 0; i < newCasesRow.Length; i++)
+                        for (int i = 1; i < newCasesRow.Length; i++)
                         {
-                            s3.Points.AddXY(i, newCasesRow[i]);
+                            //s3.Points.AddXY(i, newCasesRow[i]);
+                            pt = new DataPoint(i, newCasesRow[i]);
+                            pt.AxisLabel = stringHeaderRow[i + firstDataColIX];
+                            s3.Points.Add(pt);
                         }
 
                         Series s4 = new Series("doubling time");
@@ -462,15 +472,21 @@ namespace Covid19DoublingTime
 
 
                         chart4.Series.Add(s4);
-                        for (int i = 0; i < doublingRow.Length; i++)
+                        for (int i = 1; i < doublingRow.Length; i++)
                         {
-                            s4.Points.AddXY(i, doublingRow[i]);
+                            //s4.Points.AddXY(i, doublingRow[i]);
+                            pt = new DataPoint(i, doublingRow[i]);
+                            pt.AxisLabel = stringHeaderRow[i + firstDataColIX];
+                            s4.Points.Add(pt);
                         }
 
                         chart4.Series.Add(s5);
-                        for (int i = 0; i < doublingRow.Length; i++)
+                        for (int i = 1; i < doublingRow.Length; i++)
                         {
-                            s5.Points.AddXY(i, reproRateRow[i]);
+                            //s5.Points.AddXY(i, reproRateRow[i]);
+                            pt = new DataPoint(i, reproRateRow[i]);
+                            pt.AxisLabel = stringHeaderRow[i + firstDataColIX];
+                            s5.Points.Add(pt);
                         }
 
 
@@ -484,11 +500,17 @@ namespace Covid19DoublingTime
                         Series s7 = new Series("repro rate exp");
                         chart5.Series.Add(s6);
                         chart5.Series.Add(s7);
-                        for (int i = 0; i < doublingRow.Length; i++)
+                        for (int i = 1; i < doublingRow.Length; i++)
                         {
                             //display -1 for out of range
-                            s6.Points.AddXY(i, (doublingExpRow[i] >= 0 && doublingExpRow[i] <= 30) ? doublingExpRow[i] : -1);
-                            s7.Points.AddXY(i, reproRateExpRow[i]);
+                            //s6.Points.AddXY(i, (doublingExpRow[i] >= 0 && doublingExpRow[i] <= 30) ? doublingExpRow[i] : -1);
+                            pt = new DataPoint(i, (doublingExpRow[i] >= 0 && doublingExpRow[i] <= 30) ? doublingExpRow[i] : -1);
+                            pt.AxisLabel = stringHeaderRow[i + firstDataColIX];
+                            s6.Points.Add(pt);
+                            //s7.Points.AddXY(i, reproRateExpRow[i]);
+                            pt = new DataPoint(i, reproRateExpRow[i]);
+                            pt.AxisLabel = stringHeaderRow[i + firstDataColIX];
+                            s7.Points.Add(pt);
                         }
 
 
