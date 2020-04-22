@@ -40,13 +40,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B071FF5717A0495BFC46676776906DC2"
+        "OwnerKey" = "8:_3DF3E70D025A82A1F4F48C9D3E8660C8"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3DF3E70D025A82A1F4F48C9D3E8660C8"
+        "OwnerKey" = "8:_B071FF5717A0495BFC46676776906DC2"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -263,15 +263,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Covid19DoublingTime"
-        "ProductCode" = "8:{EBB1FA62-368B-401D-927E-38865811D4EB}"
-        "PackageCode" = "8:{0CCDBB0D-A9FE-4273-A6BB-860831203779}"
+        "ProductCode" = "8:{1EB949B7-55A8-4DD0-A42E-69E5EA4BE176}"
+        "PackageCode" = "8:{D4BDDFA9-3A17-47BA-BE6F-A711980E274D}"
         "UpgradeCode" = "8:{1C4DA1A0-3C9E-477D-8433-F0E136E09E40}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.14"
+        "ProductVersion" = "8:1.0.15"
         "Manufacturer" = "8:EastRidges Medical Software"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
