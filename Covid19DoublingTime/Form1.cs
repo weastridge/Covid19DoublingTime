@@ -75,6 +75,7 @@ namespace Covid19DoublingTime
                     statusStrip1.LayoutStyle = ToolStripLayoutStyle.Flow;
 
                     string dataFileName = "";
+                    string dataDeathsFileName = "";
                     //IX in row of place and subplace
                     int placeNameIX = 1;
                     int subplaceNameIx = 0;
@@ -84,11 +85,13 @@ namespace Covid19DoublingTime
                             placeNameIX = 1;
                             subplaceNameIx = 0;
                             dataFileName = MainClass.DataFileNameforCountries;
+                            dataDeathsFileName = MainClass.DataFileNameForCountriesDeaths;
                             break;
                         case "Hopkins_US":
                             placeNameIX = 6;
                             subplaceNameIx = 5;
                             dataFileName = MainClass.DataFileNameForStates;
+                            dataDeathsFileName = MainClass.DataFileNameForStatesDeaths;
                             break;
                         default:
                             break;
@@ -102,7 +105,15 @@ namespace Covid19DoublingTime
                             ".  Please see Tools, Settings to see how to load that from the Internet.  ");
                         return;
                     }
-                    loadData(dataFileName);
+                    fi = new FileInfo(dataDeathsFileName);
+                    if (!fi.Exists)
+                    {
+                        MessageBox.Show("Hi.  I don't see the data file we're looking for, named \r\n" +
+                            dataDeathsFileName +
+                            ".  Please see Tools, Settings to see how to load that from the Internet.  ");
+                        return;
+                    }
+                    loadData(dataFileName, dataDeathsFileName);
                     //load combobox
                     ignoreChangeEvents = true;
                     comboBoxPlaces.Items.Clear();
@@ -123,7 +134,8 @@ namespace Covid19DoublingTime
                                 foundIt = true;
                                 break;
                             }
-                            else if(((MainClass.DataPlace)o).Place.Trim() == "Tennessee")
+                            else if((((MainClass.DataPlace)o).Place.Trim() == "Tennessee") &&
+                                (((MainClass.DataPlace)o).SubPlace.Trim() == "Sullivan"))
                             {
                                 comboBoxPlaces.SelectedItem = o;
                                 foundIt = true;
@@ -143,7 +155,7 @@ namespace Covid19DoublingTime
             }
         }
 
-        private void loadData(string datafilename)
+        private void loadData(string datafilename, string deathsDataFileName)
         {
             //check if file exists
             FileInfo fi = new FileInfo(datafilename);
@@ -154,6 +166,7 @@ namespace Covid19DoublingTime
                     ".  Please see Tools, About to see who to load that from the Internet.  ");
                 return;
             }
+            //read cases data into data set
             using (System.IO.StreamReader sr = new StreamReader(datafilename))
             {
                 MainClass.CovidDataSet = new string[10000][];
@@ -181,8 +194,43 @@ namespace Covid19DoublingTime
                 sb.Append(Environment.NewLine);
                 sb.Append("First datum is ");
                 sb.Append(MainClass.CovidDataSet[0][0]);
-                MessageBox.Show(sb.ToString());
+                statusStrip1.Items[0].Text = sb.ToString();
+                //MessageBox.Show(sb.ToString());
             }//using
+            //and deaths data into deaths data set
+            if (!string.IsNullOrEmpty(deathsDataFileName))
+            {
+                using (System.IO.StreamReader sr = new StreamReader(deathsDataFileName))
+                {
+                    MainClass.CovidDeathsDataSet = new string[10000][];
+                    string[] parts;
+                    string line;
+                    int lineNum = 0;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        parts = Wve.WveTools.ReadCsvLine(line);
+                        MainClass.CovidDeathsDataSet[lineNum] = parts;
+                        lineNum++;
+                    }
+                    //resize dataset
+                    string[][] resized = new string[lineNum][];
+                    for (int i = 0; i < lineNum; i++)
+                    {
+                        resized[i] = MainClass.CovidDeathsDataSet[i];
+                    }
+                    MainClass.CovidDeathsDataSet = resized;
+                    //report
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("read ");
+                    sb.Append(lineNum);
+                    sb.Append(" lines.");
+                    sb.Append(Environment.NewLine);
+                    sb.Append("First datum is ");
+                    sb.Append(MainClass.CovidDeathsDataSet[0][0]);
+                    statusStrip1.Items[0].Text = sb.ToString();
+                    //MessageBox.Show(sb.ToString());
+                }//using
+            }//if not null deathsdatafilename
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)

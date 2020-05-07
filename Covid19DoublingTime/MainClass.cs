@@ -25,6 +25,15 @@ namespace Covid19DoublingTime
         internal static string DataUrlForCountries = 
             "https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
         /// <summary>
+        /// name of data file for global deaths
+        /// </summary>
+        internal static string DataFileNameForCountriesDeaths = @"c:\Covid19\time_series_covid19_confirmed_global_deaths.csv";
+        /// <summary>
+        /// url to get data file for global deaths
+        /// </summary>
+        internal static string DataUrlForCountriesDeaths =
+            @"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv";
+        /// <summary>
         /// name of the datafile for US
         /// </summary>
         internal static string DataFileNameForStates = @"c:\covid19\time_series_covid19_confirmed_US.csv";
@@ -34,6 +43,15 @@ namespace Covid19DoublingTime
         internal static string DataUrlForStates = 
             "https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv";
         /// <summary>
+        /// name of the datafile for US deaths
+        /// </summary>
+        internal static string DataFileNameForStatesDeaths = @"c:\covid19\time_series_covid19_confirmed_US_deaths.csv";
+        /// <summary>
+        /// url to get data for US deaths
+        /// </summary>
+        internal static string DataUrlForStatesDeaths =
+            @"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv";
+        /// <summary>
         /// default name, with XXX to be replaced by place name
         /// </summary>
         internal static string DefaultOutputName = @"c:\Covid19\doublingForXXX.csv";
@@ -41,6 +59,10 @@ namespace Covid19DoublingTime
         /// the data array
         /// </summary>
         internal static string[][] CovidDataSet;
+        /// <summary>
+        /// the data array for deaths
+        /// </summary>
+        internal static string[][] CovidDeathsDataSet;
         /// <summary>
         /// incubation period in days
         /// </summary>

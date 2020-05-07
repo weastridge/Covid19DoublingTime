@@ -87,26 +87,32 @@ namespace Covid19DoublingTime
                 //get data
                 string url = string.Empty;
                 string outputFileName = string.Empty;
+                string urlDeaths = string.Empty;
+                string outputDeathsFileName = string.Empty;
                 switch (MainClass.TypeOfData)
                 {
                     case "Hopkins_World":
                         url = MainClass.DataUrlForCountries;
                         outputFileName = MainClass.DataFileNameforCountries;
+                        urlDeaths = MainClass.DataUrlForCountriesDeaths;
+                        outputDeathsFileName = MainClass.DataFileNameForCountriesDeaths;
                         break;
                     case "Hopkins_US":
                         url = MainClass.DataUrlForStates;
                         outputFileName = MainClass.DataFileNameForStates;
+                        urlDeaths = MainClass.DataUrlForStatesDeaths;
+                        outputDeathsFileName = MainClass.DataFileNameForStatesDeaths;
                         break;
                 }
                 string dataRaw = MainClass.SendRequest("GET", "", null, url);
-                //write to file
+                string dataRawDeaths = MainClass.SendRequest("GET", "", null, urlDeaths);
+                //write to files
                 DirectoryInfo di = new DirectoryInfo(@"c:\covid19");
                 if(!di.Exists)
                 {
                     di.Create();
                 }
                 //rename old data if exists
-
                 FileInfo fi = new FileInfo(outputFileName);
                 if(fi.Exists)
                 {
@@ -116,14 +122,29 @@ namespace Covid19DoublingTime
                     }
                     fi.MoveTo(outputFileName + ".old");
                 }
-                //write to file
+                fi = new FileInfo(outputDeathsFileName);
+                if (fi.Exists)
+                {
+                    if (File.Exists(outputDeathsFileName + ".old"))
+                    {
+                        File.Delete(outputDeathsFileName + ".old");
+                    }
+                    fi.MoveTo(outputDeathsFileName + ".old");
+                }
+                //write to files
                 using (StreamWriter sw = new StreamWriter(outputFileName,
                        false)) //false to append
                 {
                     sw.Write(dataRaw);
                     sw.Flush();
                 }
-                MessageBox.Show("Downloaded " + outputFileName);
+                using (StreamWriter sw = new StreamWriter(outputDeathsFileName,
+                       false)) //false to append
+                {
+                    sw.Write(dataRawDeaths);
+                    sw.Flush();
+                }
+                MessageBox.Show("Downloaded " + outputFileName  + " and " + outputDeathsFileName);
             }
             catch (Exception er)
             {
