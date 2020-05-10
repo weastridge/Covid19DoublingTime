@@ -35,10 +35,15 @@ namespace Covid19DoublingTime
         /// ignore events while loading controls
         /// </summary>
         private bool ignoreChangeEvents = false;
-
         /// <summary>
-        /// reload the main form
+        /// list of places in deaths data set
         /// </summary>
+        MainClass.DataPlace[] _deathsPlaces = null;
+        /// <summary>
+        /// running text string of results of operations
+        /// </summary>
+        private string _results = "For comparison, US covid death rate was 80000/331002651 = 24/100k on 5/9/2020 and all cause mortality 60/100k/month or 720/100k/year.";
+        
         /// <param name="sender"></param>
         /// <param name="e"></param>
         internal static void ReloadForm1(object sender, EventArgs e)
@@ -114,13 +119,28 @@ namespace Covid19DoublingTime
                         return;
                     }
                     loadData(dataFileName, dataDeathsFileName);
+                    //load deaths places
+                    _deathsPlaces = null;
+                    if(MainClass.CovidDeathsDataSet != null)
+                    {
+                        _deathsPlaces = new MainClass.DataPlace[MainClass.CovidDeathsDataSet.Length];
+                        for(int i=0; i<MainClass.CovidDeathsDataSet.Length; i++)
+                        {
+                            _deathsPlaces[i] = new MainClass.DataPlace(
+                                MainClass.CovidDeathsDataSet[i][subplaceNameIx], 
+                                MainClass.CovidDeathsDataSet[i][placeNameIX],
+                                i);
+                        }
+                    }
                     //load combobox
                     ignoreChangeEvents = true;
                     comboBoxPlaces.Items.Clear();
                     for(int i=0; i<MainClass.CovidDataSet.Length; i++)
                     {
                         comboBoxPlaces.Items.Add(new MainClass.DataPlace(
-                            MainClass.CovidDataSet[i][subplaceNameIx], MainClass.CovidDataSet[i][placeNameIX], i));
+                            MainClass.CovidDataSet[i][subplaceNameIx], 
+                            MainClass.CovidDataSet[i][placeNameIX], 
+                            i));
                     }
                     ignoreChangeEvents = false;
                     if(comboBoxPlaces.Items.Count > 0)
@@ -170,6 +190,7 @@ namespace Covid19DoublingTime
             using (System.IO.StreamReader sr = new StreamReader(datafilename))
             {
                 MainClass.CovidDataSet = new string[10000][];
+                MainClass.CovidDeathsDataSet = null; //unless data file found for i
                 string[] parts;
                 string line;
                 int lineNum = 0;
@@ -198,7 +219,7 @@ namespace Covid19DoublingTime
                 //MessageBox.Show(sb.ToString());
             }//using
             //and deaths data into deaths data set
-            if (!string.IsNullOrEmpty(deathsDataFileName))
+            if ((!string.IsNullOrEmpty(deathsDataFileName)) && File.Exists(deathsDataFileName))
             {
                 using (System.IO.StreamReader sr = new StreamReader(deathsDataFileName))
                 {
@@ -278,14 +299,35 @@ namespace Covid19DoublingTime
                 try
                 {
                     statusStrip1.Items[0].Text = "calculating...";
+                    labelTitle.Text = "Calculating for ...";
+                    textBoxResults.Clear();
+                    StringBuilder sbResults = new StringBuilder();
                     if (comboBoxPlaces.SelectedItem != null)
                     {
                         int firstDataColIX = int.MinValue; //zero based index if first column containing data   
                         MainClass.DataPlace place = (MainClass.DataPlace)comboBoxPlaces.SelectedItem;
                         string outputFileName = MainClass.DefaultOutputName.Replace("XXX", place.SubPlace + place.Place);
                         string[] stringCasesRow = MainClass.CovidDataSet[place.Index];
+                        string[] stringDeathsRow = null; //unless found
+                        if (MainClass.CovidDeathsDataSet != null)
+                        {
+                            //find matching place in deaths set
+                            for (int i=0; i<_deathsPlaces.Length; i++)
+                            {
+                                if((place.Place.Trim().ToLower() == _deathsPlaces[i].Place.Trim().ToLower()) &&
+                                    (place.SubPlace.Trim().ToLower() == _deathsPlaces[i].SubPlace.Trim().ToLower()))
+                                {
+                                    stringDeathsRow = MainClass.CovidDeathsDataSet[i];
+                                    break;
+                                }
+                            }
+                        }
                         string[] stringHeaderRow = MainClass.CovidDataSet[0];
+                        string[] stringDeathsHeaderRow = MainClass.CovidDeathsDataSet[0];
                         string lastDate = stringHeaderRow[stringHeaderRow.Length - 1];
+                        double population = double.MinValue; //unless population found in deaths row
+                        double totalDeaths = int.MinValue; //unless assigned
+                        int populationColumns = 0;//unless Hopkins_US the deaths table includes a col for population
                         
                         switch(MainClass.TypeOfData) // == "Hopkins_World")
                         {
@@ -294,11 +336,28 @@ namespace Covid19DoublingTime
                                 break;
                             case "Hopkins_US":
                                 firstDataColIX = 11; //12th col starts data
+                                //but notice the deaths dataset has population in 12th col and deaths starting 13th
+                                populationColumns = 1;
                                 break;
                             default:
                                 break;
                         }
-                        
+                        double[] deathsRow = null; //unless created
+                        if (stringDeathsRow != null)
+                        {
+                            deathsRow = new double[stringDeathsRow.Length - firstDataColIX - populationColumns];//because indlude population
+                            for (int i = 0; i < deathsRow.Length; i++)
+                            {
+                                deathsRow[i] = double.Parse(stringDeathsRow[i + firstDataColIX + populationColumns]);
+                                //save last one
+                                if(i==deathsRow.Length-1) //last one
+                                {
+                                    totalDeaths = deathsRow[i];
+                                }
+                            }
+                            population = double.Parse(stringDeathsRow[firstDataColIX]);
+                        }
+
                         double[] casesRow = new double[stringCasesRow.Length - firstDataColIX];
                         for (int i = 0; i < casesRow.Length; i++)
                         {
@@ -322,8 +381,19 @@ namespace Covid19DoublingTime
                         double m; //slope of log rate
                         double b; //b intercept of log least squares fit
                         double priorCases = int.MaxValue; //number of cases one incubation period ago
+                        double[] newDeathsRow = null; //unless created
 
                         //calculate
+                        newDeathsRow = null;
+                        if(deathsRow!= null)
+                        {
+                            newDeathsRow = new double[deathsRow.Length];
+                            newDeathsRow[0] = -1; //first col null
+                            for(int i=1; i<deathsRow.Length; i++)
+                            {
+                                newDeathsRow[i] = deathsRow[i] - deathsRow[i - 1];
+                            }
+                        }
                         double casesRef = 0; //the number of cases we are looking to double after so many days
                         for (int i = 0; i < casesRow.Length; i++)
                         {
@@ -395,6 +465,12 @@ namespace Covid19DoublingTime
                         {
                             string[] datesRow = new string[stringCasesRow.Length - firstDataColIX + 1];
                             Array.Copy(MainClass.CovidDataSet[0], firstDataColIX, datesRow, 1, datesRow.Length - 1);
+                            string[] deathDatesRow = null; 
+                            if (deathsRow != null)
+                            {
+                                deathDatesRow = new string[stringDeathsRow.Length - firstDataColIX + 1 - populationColumns];
+                                Array.Copy(MainClass.CovidDeathsDataSet[0], firstDataColIX + populationColumns, deathDatesRow, 1, deathDatesRow.Length - 1);
+                            }
                             //format
                             string[] strCases = new string[casesRow.Length + 1];
                             string[] strDoubling = new string[casesRow.Length + 1];
@@ -403,6 +479,13 @@ namespace Covid19DoublingTime
                             string[] strReproRate = new string[casesRow.Length + 1];
                             string[] strDoublingExp = new string[casesRow.Length + 1];
                             string[] strReproRateExp = new string[casesRow.Length + 1];
+                            string[] strDeaths = null;
+                            string[] strNewDeaths = null;
+                            if (deathsRow != null)
+                            {
+                                strDeaths = new string[deathsRow.Length + 1];
+                                strNewDeaths = new string[newDeathsRow.Length + 1];
+                            }
 
                             strCases[0] = "Cases";
                             strDoubling[0] = "DoublingTime";
@@ -411,6 +494,11 @@ namespace Covid19DoublingTime
                             strReproRate[0] = "ReproRate";
                             strDoublingExp[0] = "DoublingExp";
                             strReproRateExp[0] = "ReproRateExp";
+                            if(deathsRow != null)
+                            {
+                                strDeaths[0] = "Deaths";
+                                strNewDeaths[0] = "NewDeaths";
+                            }
                             for (int i = 0; i < casesRow.Length; i++)
                             {
                                 strCases[i + 1] = string.Format(String.Format("{0:0.#}", casesRow[i]));
@@ -421,6 +509,14 @@ namespace Covid19DoublingTime
                                 strDoublingExp[i + 1] = string.Format(String.Format("{0:0.#}", doublingExpRow[i]));
                                 strReproRateExp[i + 1] = string.Format(String.Format("{0:0.#}", reproRateExpRow[i]));
                             }
+                            if(deathsRow != null)
+                            {
+                                for (int i=0; i<deathsRow.Length; i++)
+                                {
+                                    strDeaths[i + 1] = string.Format(String.Format("{0:0.#}", deathsRow[i]));
+                                    strNewDeaths[i + 1] = string.Format(String.Format("{0:0.#}", newDeathsRow[i]));
+                                }
+                            }
                             sw.WriteLine(Wve.WveTools.WriteCsv(datesRow, false, false, false));  // row, last comma, force quotes, newline
                             sw.WriteLine(Wve.WveTools.WriteCsv(strCases, false, false, false));  // row, last comma, force quotes, newline
                             sw.WriteLine(Wve.WveTools.WriteCsv(strDoubling, false, false, false));  // row, last comma, force quotes, newline
@@ -429,6 +525,12 @@ namespace Covid19DoublingTime
                             sw.WriteLine(Wve.WveTools.WriteCsv(strNewCases, false, false, false));  // row, last comma, force quotes, newline
                             sw.WriteLine(Wve.WveTools.WriteCsv(strReproRate, false, false, false));  // row, last comma, force quotes, newline
                             sw.WriteLine(Wve.WveTools.WriteCsv(strReproRateExp, false, false, false));  // row, last comma, force quotes, newline
+                            if(deathsRow!= null)
+                            {
+                                sw.WriteLine(Wve.WveTools.WriteCsv(deathDatesRow, false, false, false));  // row, last comma, force quotes, newline
+                                sw.WriteLine(Wve.WveTools.WriteCsv(strDeaths, false, false, false));  // row, last comma, force quotes, newline
+                                sw.WriteLine(Wve.WveTools.WriteCsv(strNewDeaths, false, false, false));  // row, last comma, force quotes, newline
+                            }
                             sw.Flush();
                         }
                         MessageBox.Show("wrote file " + outputFileName);
@@ -440,6 +542,7 @@ namespace Covid19DoublingTime
                         chart3.Series.Clear();
                         chart4.Series.Clear();
                         chart5.Series.Clear();
+                        chart6.Series.Clear();
                         //chart1.ChartAreas.Clear();
                         //chart2.ChartAreas.Clear();
                         //chart3.ChartAreas.Clear();
@@ -561,14 +664,51 @@ namespace Covid19DoublingTime
                             s7.Points.Add(pt);
                         }
 
+                        Series s8 = new Series("new deaths");
+                        chart6.Series.Add(s8);
+                        if (newDeathsRow != null)
+                        {
+                            for (int i = 0; i < newDeathsRow.Length; i++)
+                            {
+                                pt = new DataPoint(i, (newDeathsRow[i] >= 0 ? newDeathsRow[i] : -1));
+                                pt.AxisLabel = stringHeaderRow[i + firstDataColIX];// i hope dates are same for deaths as cases??  prob should calcuate separately
+                                s8.Points.Add(pt);
+                            }
+                        }
+
 
                         chart1.ChartAreas[0].RecalculateAxesScale();
                         chart2.ChartAreas[0].RecalculateAxesScale();
                         chart3.ChartAreas[0].RecalculateAxesScale();
                         chart4.ChartAreas[0].RecalculateAxesScale();
                         chart5.ChartAreas[0].RecalculateAxesScale();
+                        chart6.ChartAreas[0].RecalculateAxesScale();
 
                         statusStrip1.Items[0].Text = "Calculated, last data date is " + lastDate;
+                        labelTitle.Text = comboBoxPlaces.SelectedItem.ToString();
+                        sbResults.Append(labelTitle.Text);
+                        if(totalDeaths > -1) 
+                        {
+                            sbResults.Append(": rate ");
+                            sbResults.Append(totalDeaths);
+                            if (population > 0)
+                            {
+                                sbResults.Append("/");
+                                sbResults.Append(population);
+                                sbResults.Append(" = ");
+                                sbResults.Append(String.Format("{0:0.#}", (totalDeaths / population * 100000)));
+                                sbResults.Append(" deaths/100k");
+                            }
+                            else
+                            {
+                                sbResults.Append(" deaths. ");
+                            }
+                        }
+                        sbResults.Append(Environment.NewLine);
+                        sbResults.Append(Environment.NewLine);
+                        sbResults.Append(_results);
+                        _results = sbResults.ToString();
+                        textBoxResults.Text = _results;
                     }
                 }
                 
@@ -590,9 +730,8 @@ namespace Covid19DoublingTime
                     {
                         if (comboBoxPlaces.SelectedItem != null)
                         {
-                            labelTitle.Text = comboBoxPlaces.SelectedItem.ToString();
+                            calculateAndDisplay();
                         }
-                        calculateAndDisplay();
                     }
                 }
                 catch (Exception er)
@@ -651,6 +790,18 @@ namespace Covid19DoublingTime
                 {
                     Wve.MyEr.Show(this, er, true);
                 }
+            }
+        }
+
+        private void textBoxResults_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Wve.TextViewer.ShowText("results...", textBoxResults.Text);
+            }
+            catch (Exception er)
+            {
+                Wve.MyEr.Show(this, er, true);
             }
         }
     }

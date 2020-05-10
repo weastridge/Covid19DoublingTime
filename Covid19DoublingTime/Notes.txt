@@ -14,3 +14,4 @@ US:  https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/cs
  todo:  Make settings form and config file so can choose other data sources, such as states, too.   Figure a better way to download the csv file from Johns Hopkinds github, or maybe let my program import from clipboard.
 
  //todo:  let http post load and save the data files
+ 20200507 addedd deaths, but doesn't null right- Scott County deaths keep Sullivan's daeath

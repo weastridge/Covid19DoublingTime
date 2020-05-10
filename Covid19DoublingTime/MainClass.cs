@@ -234,6 +234,16 @@ namespace Covid19DoublingTime
             /// index in data set
             /// </summary>
             internal int Index;
+            /// <summary>
+            /// population, if known
+            /// </summary>
+            internal int Population = int.MinValue;
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="subPlace"></param>
+            /// <param name="place"></param>
+            /// <param name="index"></param>
             internal DataPlace(string subPlace, string place, int index)
             {
                 SubPlace = subPlace;
