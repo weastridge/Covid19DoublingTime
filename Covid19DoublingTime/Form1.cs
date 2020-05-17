@@ -672,7 +672,7 @@ namespace Covid19DoublingTime
                         {
                             //display -1 for out of range
                             //s6.Points.AddXY(i, (doublingExpRow[i] >= 0 && doublingExpRow[i] <= 30) ? doublingExpRow[i] : -1);
-                            pt = new DataPoint(i, (doublingExpRow[i] >= 0 && doublingExpRow[i] <= 30) ? doublingExpRow[i] : -1);
+                            pt = new DataPoint(i, (doublingExpRow[i] >= 0 && doublingExpRow[i] <= 29) ? doublingExpRow[i] : 29);
                             pt.AxisLabel = stringHeaderRow[i + firstDataColIX];
                             s6.Points.Add(pt);
                             //s7.Points.AddXY(i, reproRateExpRow[i]);

@@ -54,6 +54,9 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.radioButtonCounties = new System.Windows.Forms.RadioButton();
+            this.radioButtonCountries = new System.Windows.Forms.RadioButton();
+            this.buttonGo = new System.Windows.Forms.Button();
             this.TextBoxResults = new System.Windows.Forms.TextBox();
             this.chart6 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.label1 = new System.Windows.Forms.Label();
@@ -64,10 +67,7 @@
             this.chart3 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.buttonGo = new System.Windows.Forms.Button();
             this.comboBoxPlaces = new System.Windows.Forms.ComboBox();
-            this.radioButtonCountries = new System.Windows.Forms.RadioButton();
-            this.radioButtonCounties = new System.Windows.Forms.RadioButton();
             this.menuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart6)).BeginInit();
@@ -116,14 +116,14 @@
             // settingsToolStripMenuItem1
             // 
             this.settingsToolStripMenuItem1.Name = "settingsToolStripMenuItem1";
-            this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(116, 22);
             this.settingsToolStripMenuItem1.Text = "&Settings";
             this.settingsToolStripMenuItem1.Click += new System.EventHandler(this.settingsToolStripMenuItem1_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -159,6 +159,40 @@
             this.panel1.Size = new System.Drawing.Size(1331, 966);
             this.panel1.TabIndex = 13;
             // 
+            // radioButtonCounties
+            // 
+            this.radioButtonCounties.AutoSize = true;
+            this.radioButtonCounties.Location = new System.Drawing.Point(242, 26);
+            this.radioButtonCounties.Name = "radioButtonCounties";
+            this.radioButtonCounties.Size = new System.Drawing.Size(85, 17);
+            this.radioButtonCounties.TabIndex = 26;
+            this.radioButtonCounties.Text = "Hopkins_US";
+            this.radioButtonCounties.UseVisualStyleBackColor = true;
+            this.radioButtonCounties.CheckedChanged += new System.EventHandler(this.radioButtonCountries_CheckedChanged);
+            // 
+            // radioButtonCountries
+            // 
+            this.radioButtonCountries.AutoSize = true;
+            this.radioButtonCountries.Checked = true;
+            this.radioButtonCountries.Location = new System.Drawing.Point(242, 4);
+            this.radioButtonCountries.Name = "radioButtonCountries";
+            this.radioButtonCountries.Size = new System.Drawing.Size(98, 17);
+            this.radioButtonCountries.TabIndex = 25;
+            this.radioButtonCountries.TabStop = true;
+            this.radioButtonCountries.Text = "Hopkins_World";
+            this.radioButtonCountries.UseVisualStyleBackColor = true;
+            this.radioButtonCountries.CheckedChanged += new System.EventHandler(this.radioButtonCountries_CheckedChanged);
+            // 
+            // buttonGo
+            // 
+            this.buttonGo.Location = new System.Drawing.Point(475, 34);
+            this.buttonGo.Name = "buttonGo";
+            this.buttonGo.Size = new System.Drawing.Size(75, 23);
+            this.buttonGo.TabIndex = 13;
+            this.buttonGo.Text = "Test";
+            this.buttonGo.UseVisualStyleBackColor = true;
+            this.buttonGo.Visible = false;
+            // 
             // TextBoxResults
             // 
             this.TextBoxResults.Location = new System.Drawing.Point(849, 0);
@@ -189,11 +223,11 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(54, 34);
+            this.label1.Location = new System.Drawing.Point(846, 662);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(169, 13);
+            this.label1.Size = new System.Drawing.Size(151, 13);
             this.label1.TabIndex = 22;
-            this.label1.Text = "-1 may indicate null or out of range";
+            this.label1.Text = "doubling time > 29 is truncated";
             // 
             // chart5
             // 
@@ -300,16 +334,6 @@
             this.chart1.TabIndex = 15;
             this.chart1.Text = "chart1";
             // 
-            // buttonGo
-            // 
-            this.buttonGo.Location = new System.Drawing.Point(475, 34);
-            this.buttonGo.Name = "buttonGo";
-            this.buttonGo.Size = new System.Drawing.Size(75, 23);
-            this.buttonGo.TabIndex = 13;
-            this.buttonGo.Text = "Test";
-            this.buttonGo.UseVisualStyleBackColor = true;
-            this.buttonGo.Visible = false;
-            // 
             // comboBoxPlaces
             // 
             this.comboBoxPlaces.FormattingEnabled = true;
@@ -318,30 +342,6 @@
             this.comboBoxPlaces.Size = new System.Drawing.Size(199, 21);
             this.comboBoxPlaces.TabIndex = 14;
             this.comboBoxPlaces.SelectedIndexChanged += new System.EventHandler(this.comboBoxPlaces_SelectedIndexChanged);
-            // 
-            // radioButtonCountries
-            // 
-            this.radioButtonCountries.AutoSize = true;
-            this.radioButtonCountries.Checked = true;
-            this.radioButtonCountries.Location = new System.Drawing.Point(242, 4);
-            this.radioButtonCountries.Name = "radioButtonCountries";
-            this.radioButtonCountries.Size = new System.Drawing.Size(98, 17);
-            this.radioButtonCountries.TabIndex = 25;
-            this.radioButtonCountries.TabStop = true;
-            this.radioButtonCountries.Text = "Hopkins_World";
-            this.radioButtonCountries.UseVisualStyleBackColor = true;
-            this.radioButtonCountries.CheckedChanged += new System.EventHandler(this.radioButtonCountries_CheckedChanged);
-            // 
-            // radioButtonCounties
-            // 
-            this.radioButtonCounties.AutoSize = true;
-            this.radioButtonCounties.Location = new System.Drawing.Point(242, 26);
-            this.radioButtonCounties.Name = "radioButtonCounties";
-            this.radioButtonCounties.Size = new System.Drawing.Size(85, 17);
-            this.radioButtonCounties.TabIndex = 26;
-            this.radioButtonCounties.Text = "Hopkins_US";
-            this.radioButtonCounties.UseVisualStyleBackColor = true;
-            this.radioButtonCounties.CheckedChanged += new System.EventHandler(this.radioButtonCountries_CheckedChanged);
             // 
             // Form1
             // 
