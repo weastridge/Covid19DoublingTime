@@ -42,7 +42,7 @@ namespace Covid19DoublingTime
         /// <summary>
         /// running text string of results of operations
         /// </summary>
-        private string _results = "For comparison, US covid death rate was 80000/331002651 = 24/100k on 5/9/2020 and all cause mortality 60/100k/month or 720/100k/year.";
+        private string _results = "For comparison, US covid death rate was 80000/331002651 = 24/100k on 5/9/2020 and all cause mortality 60/100k/month or 720/100k/year.\r\n\r\n";
         
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -218,6 +218,13 @@ namespace Covid19DoublingTime
                 statusStrip1.Items[0].Text = sb.ToString();
                 //MessageBox.Show(sb.ToString());
             }//using
+             //append Ballad if this is states data
+            if (datafilename == MainClass.DataFileNameForStates)
+            {
+                MainClass.AggregateBallad agg = new MainClass.AggregateBallad();
+                int rowsFound = agg.AppendAggregate(ref MainClass.CovidDataSet, 6, 5, 11);
+                string s = rowsFound.ToString();
+            }
             //and deaths data into deaths data set
             if ((!string.IsNullOrEmpty(deathsDataFileName)) && File.Exists(deathsDataFileName))
             {
@@ -251,6 +258,13 @@ namespace Covid19DoublingTime
                     statusStrip1.Items[0].Text = sb.ToString();
                     //MessageBox.Show(sb.ToString());
                 }//using
+                //append Ballad if this is states data
+                if(deathsDataFileName == MainClass.DataFileNameForStatesDeaths)
+                {
+                    MainClass.AggregateBallad agg = new MainClass.AggregateBallad();
+                    int rowsFound = agg.AppendAggregate(ref MainClass.CovidDeathsDataSet, 6, 5, 11); //11 is population
+                    //string s = rowsFound.ToString();
+                }
             }//if not null deathsdatafilename
         }
 
@@ -300,7 +314,7 @@ namespace Covid19DoublingTime
                 {
                     statusStrip1.Items[0].Text = "calculating...";
                     labelTitle.Text = "Calculating for ...";
-                    textBoxResults.Clear();
+                    //TextBoxResults.Clear();
                     StringBuilder sbResults = new StringBuilder();
                     if (comboBoxPlaces.SelectedItem != null)
                     {
@@ -533,7 +547,10 @@ namespace Covid19DoublingTime
                             }
                             sw.Flush();
                         }
-                        MessageBox.Show("wrote file " + outputFileName);
+                        sbResults.Append("Wrote file: ");
+                        sbResults.Append(outputFileName);
+                        sbResults.Append("\r\n");
+                        //MessageBox.Show("wrote file " + outputFileName);
 
                         //now graphs
                         DataPoint pt;
@@ -708,7 +725,7 @@ namespace Covid19DoublingTime
                         sbResults.Append(Environment.NewLine);
                         sbResults.Append(_results);
                         _results = sbResults.ToString();
-                        textBoxResults.Text = _results;
+                        TextBoxResults.Text = _results;
                     }
                 }
                 
@@ -765,9 +782,11 @@ namespace Covid19DoublingTime
             {
                 try
                 {
-                    SettingsForm dlg = new SettingsForm();
+                    SettingsForm dlg = new SettingsForm(this);
                     if(dlg.ShowDialog() == DialogResult.OK)
                     {
+                        _results = dlg.Log + _results;
+                        //TextBoxResults.Text = dlg.Log + TextBoxResults.Text;
                         Form1_Load(sender, e);
                     }
                 }
@@ -797,11 +816,31 @@ namespace Covid19DoublingTime
         {
             try
             {
-                Wve.TextViewer.ShowText("results...", textBoxResults.Text);
+                Wve.TextViewer.ShowText("results...", TextBoxResults.Text);
             }
             catch (Exception er)
             {
                 Wve.MyEr.Show(this, er, true);
+            }
+        }
+
+        private void radioButtonCountries_CheckedChanged(object sender, EventArgs e)
+        {
+            using (Wve.HourglassCursor waitCursor = new Wve.HourglassCursor())
+            {
+                try
+                {
+                    if(((RadioButton)sender).Checked)
+                    {
+                        MainClass.TypeOfData = ((RadioButton)sender).Text;
+                        //reload
+                        buttonRefresh_Click(sender, e);
+                    }
+                }
+                catch (Exception er)
+                {
+                    Wve.MyEr.Show(this, er, true);
+                }
             }
         }
     }

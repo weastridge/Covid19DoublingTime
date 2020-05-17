@@ -15,3 +15,5 @@ US:  https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/cs
 
  //todo:  let http post load and save the data files
  20200507 addedd deaths, but doesn't null right- Scott County deaths keep Sullivan's daeath
+
+ 20201516 working on ballad group ; need to sum population in the deaths data row...

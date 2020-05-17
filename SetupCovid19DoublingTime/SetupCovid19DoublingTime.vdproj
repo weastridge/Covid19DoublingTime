@@ -40,13 +40,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B071FF5717A0495BFC46676776906DC2"
+        "OwnerKey" = "8:_3DF3E70D025A82A1F4F48C9D3E8660C8"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3DF3E70D025A82A1F4F48C9D3E8660C8"
+        "OwnerKey" = "8:_B071FF5717A0495BFC46676776906DC2"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -151,6 +151,11 @@
             "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
                 "ScatterAssemblies"
                 {
+                    "_3DF3E70D025A82A1F4F48C9D3E8660C8"
+                    {
+                    "Name" = "8:System.Net.Http.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:System.Net.Http.dll"
             "TargetName" = "8:"
@@ -177,6 +182,11 @@
             "AssemblyAsmDisplayName" = "8:Wve, Version=1.1.1.1, Culture=neutral, PublicKeyToken=e8725e31076b13cd, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_B071FF5717A0495BFC46676776906DC2"
+                    {
+                    "Name" = "8:Wve.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Wve.dll"
             "TargetName" = "8:"
@@ -263,15 +273,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Covid19DoublingTime"
-        "ProductCode" = "8:{E9860107-97E1-4D5B-B8C4-4A8BBB3AA9BC}"
-        "PackageCode" = "8:{1206B2E2-94C6-4D0C-817A-C1D174F8FB06}"
+        "ProductCode" = "8:{74CC17D4-D84F-4CBB-B1C3-3B6909223D83}"
+        "PackageCode" = "8:{DE7CCECE-B28B-4CCF-BEA9-9C0BA39832E8}"
         "UpgradeCode" = "8:{1C4DA1A0-3C9E-477D-8433-F0E136E09E40}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.16"
+        "ProductVersion" = "8:1.0.17"
         "Manufacturer" = "8:EastRidges Medical Software"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

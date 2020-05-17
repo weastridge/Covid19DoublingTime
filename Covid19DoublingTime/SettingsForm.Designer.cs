@@ -41,7 +41,8 @@
             this.listBoxTypeOfData.Name = "listBoxTypeOfData";
             this.listBoxTypeOfData.Size = new System.Drawing.Size(169, 95);
             this.listBoxTypeOfData.TabIndex = 0;
-            this.listBoxTypeOfData.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.listBoxTypeOfData.Visible = false;
+            this.listBoxTypeOfData.SelectedIndexChanged += new System.EventHandler(this.listBoxTypeOfData_SelectedIndexChanged);
             // 
             // buttonDownload
             // 
