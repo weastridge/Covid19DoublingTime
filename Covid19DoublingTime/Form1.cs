@@ -643,7 +643,8 @@ namespace Covid19DoublingTime
                         for (int i = 1; i < doublingRow.Length; i++)
                         {
                             //s4.Points.AddXY(i, doublingRow[i]);
-                            pt = new DataPoint(i, doublingRow[i]);
+                            //pt = new DataPoint(i, doublingRow[i]);
+                            pt = new DataPoint(i, (doublingRow[i] >= 0 && doublingRow[i] <= 29) ? doublingRow[i] : 29);
                             pt.AxisLabel = stringHeaderRow[i + firstDataColIX];
                             s4.Points.Add(pt);
                         }
