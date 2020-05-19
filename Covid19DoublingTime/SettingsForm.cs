@@ -71,7 +71,7 @@ namespace Covid19DoublingTime
             }
         }
 
-        private void buttonDownload_Click(object sender, EventArgs e)
+        internal void buttonDownload_Click(object sender, EventArgs e)
         {
             using (Wve.HourglassCursor waitCursor = new Wve.HourglassCursor())
             {

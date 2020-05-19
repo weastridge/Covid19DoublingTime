@@ -71,7 +71,7 @@ namespace Covid19DoublingTime
         /// <summary>
         /// e.g. Hopkins_World, Hopkins_US
         /// </summary>
-        internal static string TypeOfData = "Hopkins_World"; //by default
+        internal static string TypeOfData = "Hopkins_US"; // default
 
 
         #region methods
