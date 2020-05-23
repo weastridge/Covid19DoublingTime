@@ -398,8 +398,11 @@ namespace Covid19DoublingTime
                         //reproduction rate comparing logarithmic growth rate
                         double[] reproRateExpRow = (double[])doublingRow.Clone();
                         List<PointF> points; //for calculating logarithmic growth past (incubationdays) days.
+                        List<PointF> pointsLast14;  //for calculating last 14 days slope
                         double m; //slope of log rate
                         double b; //b intercept of log least squares fit
+                        double mLast14 = int.MinValue;
+                        double bLast14 = int.MinValue;
                         double priorCases = int.MaxValue; //number of cases one incubation period ago
                         double[] newDeathsRow = null; //unless created
 
@@ -423,6 +426,16 @@ namespace Covid19DoublingTime
                             if (i > 0)
                             {
                                 newCasesRow[i] = casesRow[i] - casesRow[i - 1];
+                            }
+                            //calculate slope of last 14 days
+                            if((i> 13) && (i == newCasesRow.Length -1))
+                            {
+                                pointsLast14 = new List<PointF>(14);
+                                for(int j=0; j<14; j++)
+                                {
+                                    pointsLast14.Add(new PointF(i - 13 + j, (float)newCasesRow[i - 13 + j]));
+                                }
+                                MainClass.FindLinearLeastSquaresFit(pointsLast14, out mLast14, out bLast14);
                             }
                             if (i > MainClass.IncubationDays - 1)
                             {
@@ -580,6 +593,8 @@ namespace Covid19DoublingTime
                         s.MarkerColor = Color.Black;
                         //s.IsVisibleInLegend = false;
 
+                        
+
                         chart1.Series.Add(s);
                         for (int i = 1; i < casesRow.Length; i++)
                         {
@@ -624,6 +639,20 @@ namespace Covid19DoublingTime
                             pt = new DataPoint(i, newCasesRow[i]);
                             pt.AxisLabel = stringHeaderRow[i + firstDataColIX];
                             s3.Points.Add(pt);
+                        }
+
+                        if ((mLast14 != double.MinValue) && (bLast14 != double.MinValue))
+                        {
+                            Series sLast14 = new Series("last 14");
+                            sLast14.ChartType = SeriesChartType.Line;
+                            sLast14.MarkerColor = Color.Red;
+                            sLast14.MarkerStyle = MarkerStyle.Circle;
+                            chart2.Series.Add(sLast14);
+                            //y=mx + b
+                            pt = new DataPoint(casesRow.Length - 14, (mLast14 * (casesRow.Length - 14) + bLast14));
+                            sLast14.Points.Add(pt);
+                            pt = new DataPoint(casesRow.Length - 1, (mLast14 * (casesRow.Length - 1) + bLast14));
+                            sLast14.Points.Add(pt);
                         }
 
                         Series s4 = new Series("doubling time");
