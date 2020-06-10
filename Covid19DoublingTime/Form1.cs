@@ -42,8 +42,11 @@ namespace Covid19DoublingTime
         /// <summary>
         /// running text string of results of operations
         /// </summary>
-        private string _results = "For comparison, US covid death rate was 80000/331002651 = 24/100k on 5/9/2020 and all cause mortality 60/100k/month or 720/100k/year.\r\n\r\n";
-        
+        //private string _results = "For comparison, US covid death rate was 80000/331002651 = 24/100k on 5/9/2020 and all cause mortality 60/100k/month or 720/100k/year.\r\n\r\n";
+        private string _results = "For comparison, US covid death rate was 114341/331002651 = 35/100k on 6/10/2020 and all cause mortality is about 74/100k/month or 888/100k/year.\r\n\r\n";
+        //age adjusted death rate 724/100k in 2018 per cdc, but unadjusted death rate 864/100k in 2017
+        //and macrotrends.net says 888/100k in 2020
+
         /// <param name="sender"></param>
         /// <param name="e"></param>
         internal static void ReloadForm1(object sender, EventArgs e)
