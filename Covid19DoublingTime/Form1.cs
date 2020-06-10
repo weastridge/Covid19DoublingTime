@@ -347,6 +347,7 @@ namespace Covid19DoublingTime
                         string lastDate = stringHeaderRow[stringHeaderRow.Length - 1];
                         double population = double.MinValue; //unless population found in deaths row
                         double totalDeaths = int.MinValue; //unless assigned
+                        double totalCases = int.MinValue;
                         int populationColumns = 0;//unless Hopkins_US the deaths table includes a col for population
                         
                         switch(MainClass.TypeOfData) // == "Hopkins_World")
@@ -362,6 +363,7 @@ namespace Covid19DoublingTime
                             default:
                                 break;
                         }
+                        //read deaths row
                         double[] deathsRow = null; //unless created
                         if (stringDeathsRow != null)
                         {
@@ -377,11 +379,16 @@ namespace Covid19DoublingTime
                             }
                             population = double.Parse(stringDeathsRow[firstDataColIX]);
                         }
-
+                        //read cases row
                         double[] casesRow = new double[stringCasesRow.Length - firstDataColIX];
                         for (int i = 0; i < casesRow.Length; i++)
                         {
                             casesRow[i] = double.Parse(stringCasesRow[i + firstDataColIX]);
+                            //save last one
+                            if (i == casesRow.Length - 1) //last one
+                            {
+                                totalCases = casesRow[i];
+                            }
                         }
                         double[] logRow = (double[])casesRow.Clone();
                         //initialize  with zeros
@@ -397,12 +404,16 @@ namespace Covid19DoublingTime
                         double[] reproRateRow = (double[])doublingRow.Clone();
                         //reproduction rate comparing logarithmic growth rate
                         double[] reproRateExpRow = (double[])doublingRow.Clone();
+                        double[] last7AvgRow = (double[])doublingRow.Clone();
                         List<PointF> points; //for calculating logarithmic growth past (incubationdays) days.
-                        List<PointF> pointsLast14;  //for calculating last 14 days slope
+                        List<PointF> pointsLast14;  //for calculating last 14 days cases slope
+                        List<PointF> pointsLast14Deaths; //for calculating last 14 days deaths slope
                         double m; //slope of log rate
                         double b; //b intercept of log least squares fit
-                        double mLast14 = int.MinValue;
-                        double bLast14 = int.MinValue;
+                        double mLast14 = int.MinValue; //cases
+                        double bLast14 = int.MinValue; //cases
+                        double mLast14Deaths = int.MinValue;
+                        double bLast14Deaths = int.MinValue;
                         double priorCases = int.MaxValue; //number of cases one incubation period ago
                         double[] newDeathsRow = null; //unless created
 
@@ -427,7 +438,18 @@ namespace Covid19DoublingTime
                             {
                                 newCasesRow[i] = casesRow[i] - casesRow[i - 1];
                             }
-                            //calculate slope of last 14 days
+                            //calculate 7 day rolling average
+                            if(i>6)
+                            {
+                                last7AvgRow[i] = (newCasesRow[i] +
+                                    newCasesRow[i - 1] +
+                                    newCasesRow[i - 2] +
+                                    newCasesRow[i - 3] +
+                                    newCasesRow[i - 4] +
+                                    newCasesRow[i - 5] +
+                                    newCasesRow[i - 6]) / 7;
+                            }
+                            //calculate slope of last 14 days cases
                             if((i> 13) && (i == newCasesRow.Length -1))
                             {
                                 pointsLast14 = new List<PointF>(14);
@@ -437,6 +459,17 @@ namespace Covid19DoublingTime
                                 }
                                 MainClass.FindLinearLeastSquaresFit(pointsLast14, out mLast14, out bLast14);
                             }
+                            //calculate slope of last 14 days deaths
+                            if ((i > 13) && (i == newDeathsRow.Length - 1))
+                            {
+                                pointsLast14Deaths = new List<PointF>(14);
+                                for (int j = 0; j < 14; j++)
+                                {
+                                    pointsLast14Deaths.Add(new PointF(i - 13 + j, (float)newDeathsRow[i - 13 + j]));
+                                }
+                                MainClass.FindLinearLeastSquaresFit(pointsLast14Deaths, out mLast14Deaths, out bLast14Deaths);
+                            }
+
                             if (i > MainClass.IncubationDays - 1)
                             {
 
@@ -584,6 +617,8 @@ namespace Covid19DoublingTime
                         //chart3.ChartAreas.Clear();
                         //chart4.ChartAreas.Clear();
 
+
+                        //chart 1 total cases
                         Series s = new Series("cases"); //cases will be the legendText
                         //s.LegendText = "legend text";
                         s.ChartType = SeriesChartType.Line;
@@ -592,9 +627,6 @@ namespace Covid19DoublingTime
                         s.MarkerSize = 3;
                         s.MarkerColor = Color.Black;
                         //s.IsVisibleInLegend = false;
-
-                        
-
                         chart1.Series.Add(s);
                         for (int i = 1; i < casesRow.Length; i++)
                         {
@@ -604,7 +636,7 @@ namespace Covid19DoublingTime
                             s.Points.Add(pt);
                         }
 
-
+                        //chart 3 log
                         Series s2 = new Series("log")
                         {
                             ChartType = SeriesChartType.Line,
@@ -624,6 +656,7 @@ namespace Covid19DoublingTime
                             s2.Points.Add(pt);
                         }
 
+                        //chart 2 new cases
                         Series s3 = new Series("new cases");
                         s3.ChartType = SeriesChartType.Candlestick;
                         s3.BorderWidth = 3;
@@ -645,7 +678,7 @@ namespace Covid19DoublingTime
                         {
                             Series sLast14 = new Series("last 14");
                             sLast14.ChartType = SeriesChartType.Line;
-                            sLast14.MarkerColor = Color.Red;
+                            sLast14.MarkerColor = Color.Orange;
                             sLast14.MarkerStyle = MarkerStyle.Circle;
                             chart2.Series.Add(sLast14);
                             //y=mx + b
@@ -654,7 +687,17 @@ namespace Covid19DoublingTime
                             pt = new DataPoint(casesRow.Length - 1, (mLast14 * (casesRow.Length - 1) + bLast14));
                             sLast14.Points.Add(pt);
                         }
+                        Series sLast7 = new Series("7 d avg");
+                        sLast7.ChartType = SeriesChartType.Line;
+                        //sLast7.MarkerColor = Color.Green;
+                        chart2.Series.Add(sLast7);
+                        for(int i=0; i<last7AvgRow.Length; i++)
+                        {
+                            pt = new DataPoint(i, last7AvgRow[i]);
+                            sLast7.Points.Add(pt);
+                        }
 
+                        //chart 4 doubling time by counting
                         Series s4 = new Series("doubling time");
                         s4.ChartType = SeriesChartType.Line;
                         s4.BorderWidth = 3;
@@ -671,8 +714,6 @@ namespace Covid19DoublingTime
                         //s5.MarkerSize = 3;
                         //s5.MarkerColor = Color.Black;
                         //s5.IsVisibleInLegend = false;
-
-
 
                         chart4.Series.Add(s4);
                         for (int i = 1; i < doublingRow.Length; i++)
@@ -694,6 +735,8 @@ namespace Covid19DoublingTime
                         }
 
 
+                        
+                        //chart 5 doubling time by exponential calculation
                         Series s6 = new Series("doubling exp");
                         s6.ChartType = SeriesChartType.Line;
                         s6.BorderWidth = 3;
@@ -716,7 +759,8 @@ namespace Covid19DoublingTime
                             pt.AxisLabel = stringHeaderRow[i + firstDataColIX];
                             s7.Points.Add(pt);
                         }
-
+ 
+                        //chart 6 new deaths
                         Series s8 = new Series("new deaths");
                         chart6.Series.Add(s8);
                         if (newDeathsRow != null)
@@ -728,7 +772,19 @@ namespace Covid19DoublingTime
                                 s8.Points.Add(pt);
                             }
                         }
-
+                        if ((mLast14Deaths != double.MinValue) && (bLast14Deaths != double.MinValue))
+                        {
+                            Series sLast14Deaths = new Series("last 14 deaths");
+                            sLast14Deaths.ChartType = SeriesChartType.Line;
+                            sLast14Deaths.MarkerColor = Color.Red;
+                            sLast14Deaths.MarkerStyle = MarkerStyle.Circle;
+                            chart6.Series.Add(sLast14Deaths);
+                            //y=mx + b
+                            pt = new DataPoint(deathsRow.Length - 14, (mLast14Deaths * (deathsRow.Length - 14) + bLast14Deaths));
+                            sLast14Deaths.Points.Add(pt);
+                            pt = new DataPoint(deathsRow.Length - 1, (mLast14Deaths * (deathsRow.Length - 1) + bLast14Deaths));
+                            sLast14Deaths.Points.Add(pt);
+                        }
 
                         chart1.ChartAreas[0].RecalculateAxesScale();
                         chart2.ChartAreas[0].RecalculateAxesScale();
@@ -740,6 +796,10 @@ namespace Covid19DoublingTime
                         statusStrip1.Items[0].Text = "Calculated, last data date is " + lastDate;
                         labelTitle.Text = comboBoxPlaces.SelectedItem.ToString();
                         sbResults.Append(labelTitle.Text);
+                        sbResults.Append(": ");
+                        //put in total cases
+                        sbResults.Append(totalCases.ToString());
+                        sbResults.Append(" cases; ");
                         if(totalDeaths > -1) 
                         {
                             sbResults.Append(": rate ");
