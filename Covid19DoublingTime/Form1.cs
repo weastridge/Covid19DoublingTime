@@ -405,6 +405,7 @@ namespace Covid19DoublingTime
                         //reproduction rate comparing logarithmic growth rate
                         double[] reproRateExpRow = (double[])doublingRow.Clone();
                         double[] last7AvgRow = (double[])doublingRow.Clone();
+                        double[] last7DeathsAvgRow = (double[])doublingRow.Clone();
                         List<PointF> points; //for calculating logarithmic growth past (incubationdays) days.
                         List<PointF> pointsLast14;  //for calculating last 14 days cases slope
                         List<PointF> pointsLast14Deaths; //for calculating last 14 days deaths slope
@@ -458,6 +459,17 @@ namespace Covid19DoublingTime
                                     pointsLast14.Add(new PointF(i - 13 + j, (float)newCasesRow[i - 13 + j]));
                                 }
                                 MainClass.FindLinearLeastSquaresFit(pointsLast14, out mLast14, out bLast14);
+                            }
+                            //calculate 7 day death rolling average
+                            if (i > 6)
+                            {
+                                last7DeathsAvgRow[i] = (newDeathsRow[i] +
+                                    newDeathsRow[i - 1] +
+                                    newDeathsRow[i - 2] +
+                                    newDeathsRow[i - 3] +
+                                    newDeathsRow[i - 4] +
+                                    newDeathsRow[i - 5] +
+                                    newDeathsRow[i - 6]) / 7;
                             }
                             //calculate slope of last 14 days deaths
                             if ((i > 13) && (i == newDeathsRow.Length - 1))
@@ -676,7 +688,7 @@ namespace Covid19DoublingTime
 
                         if ((mLast14 != double.MinValue) && (bLast14 != double.MinValue))
                         {
-                            Series sLast14 = new Series("last 14");
+                            Series sLast14 = new Series("14 d trend");
                             sLast14.ChartType = SeriesChartType.Line;
                             sLast14.MarkerColor = Color.Orange;
                             sLast14.MarkerStyle = MarkerStyle.Circle;
@@ -774,9 +786,9 @@ namespace Covid19DoublingTime
                         }
                         if ((mLast14Deaths != double.MinValue) && (bLast14Deaths != double.MinValue))
                         {
-                            Series sLast14Deaths = new Series("last 14 deaths");
+                            Series sLast14Deaths = new Series("14 d trend");
                             sLast14Deaths.ChartType = SeriesChartType.Line;
-                            sLast14Deaths.MarkerColor = Color.Red;
+                            sLast14Deaths.MarkerColor = Color.Orange;
                             sLast14Deaths.MarkerStyle = MarkerStyle.Circle;
                             chart6.Series.Add(sLast14Deaths);
                             //y=mx + b
@@ -785,6 +797,16 @@ namespace Covid19DoublingTime
                             pt = new DataPoint(deathsRow.Length - 1, (mLast14Deaths * (deathsRow.Length - 1) + bLast14Deaths));
                             sLast14Deaths.Points.Add(pt);
                         }
+                        Series sLast7Deaths = new Series("7 d avg");
+                        sLast7Deaths.ChartType = SeriesChartType.Line;
+                        //sLast7Deaths.MarkerColor = Color.Green;
+                        chart6.Series.Add(sLast7Deaths);
+                        for (int i = 0; i < last7DeathsAvgRow.Length; i++)
+                        {
+                            pt = new DataPoint(i, last7DeathsAvgRow[i]);
+                            sLast7Deaths.Points.Add(pt);
+                        }
+
 
                         chart1.ChartAreas[0].RecalculateAxesScale();
                         chart2.ChartAreas[0].RecalculateAxesScale();
@@ -1026,6 +1048,22 @@ namespace Covid19DoublingTime
                     }//for i
                      //show new results
                     Form1_Load(sender, e);
+                }
+                catch (Exception er)
+                {
+                    Wve.MyEr.Show(this, er, true);
+                }
+            }
+        }
+
+        private void chart_Click(object sender, EventArgs e)
+        {
+            using (Wve.HourglassCursor waitCursor = new Wve.HourglassCursor())
+            {
+                try
+                {
+                    SingleGraph frm = new SingleGraph((Chart)sender, labelTitle.Text);
+                    frm.Show();
                 }
                 catch (Exception er)
                 {
