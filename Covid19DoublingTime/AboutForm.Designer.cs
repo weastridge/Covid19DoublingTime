@@ -32,6 +32,7 @@
             this.labelBuildDate = new System.Windows.Forms.Label();
             this.textBoxDisplay = new System.Windows.Forms.TextBox();
             this.buttonOK = new System.Windows.Forms.Button();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // labelVersion
@@ -73,12 +74,24 @@
             this.buttonOK.UseVisualStyleBackColor = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(16, 454);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(121, 13);
+            this.linkLabel1.TabIndex = 4;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "eastridges.com/covid19";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
             // AboutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonOK;
             this.ClientSize = new System.Drawing.Size(423, 480);
+            this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.textBoxDisplay);
             this.Controls.Add(this.labelBuildDate);
@@ -97,5 +110,6 @@
         private System.Windows.Forms.Label labelBuildDate;
         private System.Windows.Forms.TextBox textBoxDisplay;
         private System.Windows.Forms.Button buttonOK;
+        private System.Windows.Forms.LinkLabel linkLabel1;
     }
 }

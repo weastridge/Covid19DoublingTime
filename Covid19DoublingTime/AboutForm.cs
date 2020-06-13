@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -34,14 +35,14 @@ namespace Covid19DoublingTime
                     " https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series \r\n");
                     // was "  https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data \r\n");
 
+                    //sb.Append(Environment.NewLine);
                     sb.Append(Environment.NewLine);
-                    sb.Append(Environment.NewLine);
-                    sb.Append(" The global data must be saved with the name ");
+                    sb.Append(" The global data is saved in your computer with the name \r\n");
                     sb.Append(MainClass.DataFileNameforCountries);
-                    sb.Append(".  Tools, settings lets you do that automatically.");
+                    sb.Append(". ");
 
                     sb.Append("\r\n\r\n");
-                    sb.Append("This is a work in progress.  I mainly wanted to see the doubling time, ");
+                    sb.Append("This is a work in progress.  Please send errors or questions to covid19@eastridges.com   \r\nI mainly wanted to see the doubling time, ");
                     sb.Append("that is, the number of days it took to reach the cases total from half the total.");
                     sb.Append("\r\nAlso interesting is the spread rate, i.e. the number of people each case spreads to.  ");
                     sb.Append("  I just took the median incubation ");
@@ -109,6 +110,21 @@ namespace Covid19DoublingTime
         private void buttonOK_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            using (Wve.HourglassCursor waitCursor = new Wve.HourglassCursor())
+            {
+                try
+                {
+                    Process.Start("https://eastridges.com/covid19");
+                }
+                catch (Exception er)
+                {
+                    Wve.MyEr.Show(this, er, true);
+                }
+            }
         }
     }
 }

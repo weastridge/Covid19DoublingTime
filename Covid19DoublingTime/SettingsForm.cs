@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -47,17 +48,17 @@ namespace Covid19DoublingTime
                 try
                 {
                     _ignoreChangeEvents = true;
-                    listBoxTypeOfData.Items.Add("Hopkins_World");
-                    listBoxTypeOfData.Items.Add("Hopkins_US");
+                    //listBoxTypeOfData.Items.Add("Hopkins_World");
+                    //listBoxTypeOfData.Items.Add("Hopkins_US");
 
-                    for(int i=0; i<listBoxTypeOfData.Items.Count; i++)
-                    {
-                        if(listBoxTypeOfData.Items[i].ToString().Trim() == 
-                            MainClass.TypeOfData.Trim())
-                        {
-                            listBoxTypeOfData.SelectedIndex = i;
-                        }
-                    }
+                    //for(int i=0; i<listBoxTypeOfData.Items.Count; i++)
+                    //{
+                    //    if(listBoxTypeOfData.Items[i].ToString().Trim() == 
+                    //        MainClass.TypeOfData.Trim())
+                    //    {
+                    //        listBoxTypeOfData.SelectedIndex = i;
+                    //    }
+                    //}
 
                 }
                 catch (Exception er)
@@ -171,17 +172,68 @@ namespace Covid19DoublingTime
             {
                 try
                 {
-                    if ((!_ignoreChangeEvents) && (listBoxTypeOfData.SelectedItem != null))
-                    {
-                        MainClass.TypeOfData = listBoxTypeOfData.SelectedItem.ToString();
-                        //reload main form
-                        //Form1.ReloadForm1(sender, e);
-                    }
+                    //if ((!_ignoreChangeEvents) && (listBoxTypeOfData.SelectedItem != null))
+                    //{
+                    //    MainClass.TypeOfData = listBoxTypeOfData.SelectedItem.ToString();
+                    //    //reload main form
+                    //    //Form1.ReloadForm1(sender, e);
+                    //}
                 }
                 catch (Exception er)
                 {
                     Wve.MyEr.Show(this, er, true);
                 }
+            }
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            using (Wve.HourglassCursor waitCursor = new Wve.HourglassCursor())
+            {
+                try
+                {
+                    Process.Start("https://eastridges.com/covid19");
+                }
+                catch (Exception er)
+                {
+                    Wve.MyEr.Show(this, er, true);
+                }
+            }
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                Process.Start("https://www.worldometers.info/coronavirus/");
+            }
+            catch (Exception er)
+            {
+                Wve.MyEr.Show(this, er, true);
+            }
+        }
+
+        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                Process.Start("https://www.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6");
+            }
+            catch (Exception er)
+            {
+                Wve.MyEr.Show(this, er, true);
+            }
+        }
+
+        private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                Process.Start("https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html");
+            }
+            catch (Exception er)
+            {
+                Wve.MyEr.Show(this, er, true);
             }
         }
     }
