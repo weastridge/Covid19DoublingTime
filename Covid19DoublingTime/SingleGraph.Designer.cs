@@ -93,7 +93,8 @@
             this.Controls.Add(this.panelMain);
             this.Controls.Add(this.panel1);
             this.Name = "SingleGraph";
-            this.Text = "SingleGraph";
+            this.Text = "eastridges.com/covid19";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SingleGraph_FormClosing);
             this.Load += new System.EventHandler(this.SingleGraph_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

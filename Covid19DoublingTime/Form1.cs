@@ -817,6 +817,12 @@ namespace Covid19DoublingTime
                         chart4.ChartAreas[0].RecalculateAxesScale();
                         chart5.ChartAreas[0].RecalculateAxesScale();
                         chart6.ChartAreas[0].RecalculateAxesScale();
+                        //chart1.Show();
+                        //chart2.Show();
+                        //chart3.Show();
+                        //chart4.Show();
+                        //chart5.Show();
+                        //chart6.Show();
 
                         statusStrip1.Items[0].Text = "Calculated, last data date is " + lastDate;
                         labelTitle.Text = comboBoxPlaces.SelectedItem.ToString();
@@ -1065,7 +1071,9 @@ namespace Covid19DoublingTime
             {
                 try
                 {
-                    SingleGraph frm = new SingleGraph((Chart)sender, labelTitle.Text);
+                    Chart chartToShow = (Chart)sender;
+                    //no  chartToShow.ChartAreas[0].RecalculateAxesScale();
+                    SingleGraph frm = new SingleGraph(ref chartToShow, labelTitle.Text);
                     frm.Show();
                 }
                 catch (Exception er)

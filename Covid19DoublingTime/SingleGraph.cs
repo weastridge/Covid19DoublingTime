@@ -21,7 +21,7 @@ namespace Covid19DoublingTime
         /// <summary>
         /// show single graph
         /// </summary>
-        public SingleGraph(Chart chartToView, string title)
+        public SingleGraph(ref Chart chartToView, string title)
         {
             _chartToView = chartToView;
             _title = title;
@@ -40,7 +40,28 @@ namespace Covid19DoublingTime
                     {
                         chart1.Series.Add(_chartToView.Series[i]);
                     }
-                    chart1.ChartAreas[0].RecalculateAxesScale();
+                    //chart1.Update();
+                    chart1.Show();
+                    //chart1.ChartAreas[0].RecalculateAxesScale();
+                }
+                catch (Exception er)
+                {
+                    Wve.MyEr.Show(this, er, true);
+                }
+            }
+        }
+
+        private void SingleGraph_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            using (Wve.HourglassCursor waitCursor = new Wve.HourglassCursor())
+            {
+                try
+                {
+                    //sorry, but we can't allow chart to be closed because for some unknown
+                    // reason, whenever the form is closed, any subsequent drawing of the
+                    // same chart causes an Internal List error within DataVisualization...
+                    MessageBox.Show("Chart will close when the main program is closed.");
+                    e.Cancel = true;
                 }
                 catch (Exception er)
                 {
