@@ -275,7 +275,36 @@ namespace Covid19DoublingTime
                     //string s = rowsFound.ToString();
                 }
             }//if not null deathsdatafilename
-        }
+            //and population data
+            //do once
+            if(MainClass.WorldPopulationDataSet == null)
+            {
+                //if database exists
+                if (File.Exists(MainClass.WorldPopulationDataSetFilename))
+                {
+                    MainClass.WorldPopulationDataSet = new string[10000][];
+                    string[] parts;
+                    string line;
+                    int lineNum = 0;
+                    using (System.IO.StreamReader sr = new StreamReader(MainClass.WorldPopulationDataSetFilename))
+                    {
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            parts = Wve.WveTools.ReadCsvLine(line);
+                            MainClass.WorldPopulationDataSet[lineNum] = parts;
+                            lineNum++;
+                        }
+                        //resize dataset
+                        string[][] resized = new string[lineNum][];
+                        for (int i = 0; i < lineNum; i++)
+                        {
+                            resized[i] = MainClass.WorldPopulationDataSet[i];
+                        }
+                        MainClass.WorldPopulationDataSet = resized;
+                    }
+                }//from if world pop data file exists
+            }//from if WorldPopulationDataSet not built yet
+        }//from LoadData()
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -357,6 +386,23 @@ namespace Covid19DoublingTime
                         {
                             case "Hopkins_World":
                                 firstDataColIX = 4; //fifth col starts data
+                                //and see if we know population from database
+                                if (MainClass.WorldPopulationDataSet != null)
+                                {
+                                    string nameToMatch = (place.SubPlace + place.Place).Trim().ToLower();
+                                    if (nameToMatch == "us")
+                                    {
+                                        nameToMatch = "united states";
+                                    }
+                                    for(int i=0; i<MainClass.WorldPopulationDataSet.Length; i++)
+                                    {
+                                        if(MainClass.WorldPopulationDataSet[i][1].ToString().ToLower() == nameToMatch)
+                                        {
+                                            double.TryParse(MainClass.WorldPopulationDataSet[i][2], out population);
+                                            break;
+                                        }
+                                    }
+                                }
                                 break;
                             case "Hopkins_US":
                                 firstDataColIX = 11; //12th col starts data
@@ -380,7 +426,10 @@ namespace Covid19DoublingTime
                                     totalDeaths = deathsRow[i];
                                 }
                             }
-                            population = double.Parse(stringDeathsRow[firstDataColIX]);
+                            if (MainClass.TypeOfData == "Hopkins_US") //that dataset has poplulation in it
+                            {
+                                population = double.Parse(stringDeathsRow[firstDataColIX]);
+                            }
                         }
                         //read cases row
                         double[] casesRow = new double[stringCasesRow.Length - firstDataColIX];
@@ -830,10 +879,17 @@ namespace Covid19DoublingTime
                         sbResults.Append(": ");
                         //put in total cases
                         sbResults.Append(totalCases.ToString());
-                        sbResults.Append(" cases; ");
+                        sbResults.Append(" cases ");
+                        if(population>0)
+                        {
+                            sbResults.Append(" which are ");
+                            sbResults.Append(String.Format("{0:0.###}", (totalCases / population * 100)));
+                            sbResults.Append("% of the population ");
+                        }
+                        sbResults.Append(";");
                         if(totalDeaths > -1) 
                         {
-                            sbResults.Append(": rate ");
+                            sbResults.Append(" Deaths: ");
                             sbResults.Append(totalDeaths);
                             if (population > 0)
                             {

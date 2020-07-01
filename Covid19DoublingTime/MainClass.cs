@@ -65,6 +65,15 @@ namespace Covid19DoublingTime
         /// </summary>
         internal static string[][] CovidDeathsDataSet;
         /// <summary>
+        /// data array for world population
+        /// </summary>
+        internal static string[][] WorldPopulationDataSet = null;
+        /// <summary>
+        /// name of population file that should be installed by this program inititally
+        /// I think I initially downloaded it from WorldOMeters but not sure
+        /// </summary>
+        internal static string WorldPopulationDataSetFilename = @"c:\Covid19\WorldPop20200428.csv";
+        /// <summary>
         /// incubation period in days
         /// </summary>
         internal static int IncubationDays = 5; //1-11 but commonly 5 per WHO
