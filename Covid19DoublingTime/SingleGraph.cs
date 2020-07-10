@@ -60,13 +60,26 @@ namespace Covid19DoublingTime
                     //sorry, but we can't allow chart to be closed because for some unknown
                     // reason, whenever the form is closed, any subsequent drawing of the
                     // same chart causes an Internal List error within DataVisualization...
-                    MessageBox.Show("Chart will close when the main program is closed.");
+                    MessageBox.Show("Chart will close when the main program is closed, " +
+                        "but can hide the box now." );
                     e.Cancel = true;
                 }
                 catch (Exception er)
                 {
                     Wve.MyEr.Show(this, er, true);
                 }
+            }
+        }
+
+        private void buttonHide_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.WindowState = FormWindowState.Minimized;
+            }
+            catch (Exception er)
+            {
+                Wve.MyEr.Show(this, er, true);
             }
         }
     }

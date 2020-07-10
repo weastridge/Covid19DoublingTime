@@ -458,6 +458,7 @@ namespace Covid19DoublingTime
                         double[] reproRateExpRow = (double[])doublingRow.Clone();
                         double[] last7AvgRow = (double[])doublingRow.Clone();
                         double[] last7DeathsAvgRow = (double[])doublingRow.Clone();
+                        double last14Avg = double.MinValue; //last 14 days including most recent day.
                         List<PointF> points; //for calculating logarithmic growth past (incubationdays) days.
                         List<PointF> pointsLast14;  //for calculating last 14 days cases slope
                         List<PointF> pointsLast14Deaths; //for calculating last 14 days deaths slope
@@ -502,15 +503,19 @@ namespace Covid19DoublingTime
                                     newCasesRow[i - 5] +
                                     newCasesRow[i - 6]) / 7;
                             }
-                            //calculate slope of last 14 days cases
+                            //calculate slope of last 14 days cases and average
                             if((i> 13) && (i == newCasesRow.Length -1))
                             {
+                                last14Avg = 0;
                                 pointsLast14 = new List<PointF>(14);
                                 for(int j=0; j<14; j++)
                                 {
                                     pointsLast14.Add(new PointF(i - 13 + j, (float)newCasesRow[i - 13 + j]));
+                                    last14Avg += newCasesRow[i - 13 + j];
                                 }
                                 MainClass.FindLinearLeastSquaresFit(pointsLast14, out mLast14, out bLast14);
+                                //figure last 14 days averag new cases
+                                last14Avg = last14Avg / 14;
                             }
                             //calculate 7 day death rolling average
                             if (i > 6)
@@ -887,6 +892,16 @@ namespace Covid19DoublingTime
                             sbResults.Append("% of the population ");
                         }
                         sbResults.Append(";");
+                        if(last14Avg != double.MinValue)
+                        {
+                            sbResults.Append(" Last 14d avg = ");
+                            sbResults.Append(String.Format("{0:0.###}", last14Avg));
+                            //sbResults.Append(" of ");
+                            //sbResults.Append(String.Format("{0:0}", population));
+                            sbResults.Append(" new cases, or ");
+                            sbResults.Append(String.Format("{0:0.##}", (last14Avg / population * 100000)));
+                            sbResults.Append(" per 100k;  ");
+                        }
                         if(totalDeaths > -1) 
                         {
                             sbResults.Append(" Deaths: ");
