@@ -293,6 +293,7 @@ namespace Covid19DoublingTime
                 new Tuple<string, string>("Washington", "Virginia"),
                 new Tuple<string, string>("Tazewell", "Virginia"),
                 new Tuple<string, string>("Smyth", "Virginia"),
+                new Tuple<string, string>("Bristol", "Virginia"),//added 9/9
                 //new Tuple<string, string>("Bland", "Virginia"),
                 //new Tuple<string, string>("Wythe", "Virginia"),
                 //new Tuple<string, string>("Grayson", "Virginia"),
@@ -307,39 +308,39 @@ namespace Covid19DoublingTime
                 //new Tuple<string, string>("Hamblen", "Tennessee"),
             };
 
-            ///// <summary>
-            ///// the data rows we parce and append to
-            ///// </summary>
-            //private string[][] _rows;
-            ///// <summary>
-            ///// index of col containing the place (e.g. country or state)
-            ///// </summary>
-            //private int _placeIX = int.MinValue;
-            ///// <summary>
-            ///// index of col containing subplace (e.g. city or county)
-            ///// </summary>
-            //private int _subPlaceIX = int.MinValue;
+                ///// <summary>
+                ///// the data rows we parce and append to
+                ///// </summary>
+                //private string[][] _rows;
+                ///// <summary>
+                ///// index of col containing the place (e.g. country or state)
+                ///// </summary>
+                //private int _placeIX = int.MinValue;
+                ///// <summary>
+                ///// index of col containing subplace (e.g. city or county)
+                ///// </summary>
+                //private int _subPlaceIX = int.MinValue;
 
-            //#region constructors
-            //public AggregateBallad(ref string[][] rows, int placeIX, int subPlaceIX)
-            //{
-            //    _rows = rows;
-            //    _placeIX = placeIX;
-            //    _subPlaceIX = subPlaceIX;
-            //}
-            //#endregion constructors
+                //#region constructors
+                //public AggregateBallad(ref string[][] rows, int placeIX, int subPlaceIX)
+                //{
+                //    _rows = rows;
+                //    _placeIX = placeIX;
+                //    _subPlaceIX = subPlaceIX;
+                //}
+                //#endregion constructors
 
-            /// <summary>
-            /// parse rows to make an aggregate row of the rows containing matching place and subPlace 
-            /// and append that aggregate row to the array of rows, then return the number of matching
-            /// rows found.
-            /// </summary>
-            /// <param name="placeIX">index of col containing place (eg country or state) or int.MinValue to match all</param>
-            /// <param name="rows">the data rows we parce and append the aggregate row to</param>
-            /// <param name="subPlaceIX">index of col contining the subplace (eg city or county) or int.MinValue to match all</param>
-            /// <param name="firstDataColIX">index of first column containing counts data</param>
-            /// <returns></returns>
-            public int AppendAggregate(ref string[][] rows,
+                /// <summary>
+                /// parse rows to make an aggregate row of the rows containing matching place and subPlace 
+                /// and append that aggregate row to the array of rows, then return the number of matching
+                /// rows found.
+                /// </summary>
+                /// <param name="placeIX">index of col containing place (eg country or state) or int.MinValue to match all</param>
+                /// <param name="rows">the data rows we parce and append the aggregate row to</param>
+                /// <param name="subPlaceIX">index of col contining the subplace (eg city or county) or int.MinValue to match all</param>
+                /// <param name="firstDataColIX">index of first column containing counts data</param>
+                /// <returns></returns>
+                public int AppendAggregate(ref string[][] rows,
                 int placeIX, 
                 int subPlaceIX,
                 int firstDataColIX)
@@ -397,6 +398,175 @@ namespace Covid19DoublingTime
                 }
                 string[][] result = new string[rows.Length + 1][];
                 for(int i=0; i<rows.Length; i++)
+                {
+                    result[i] = rows[i];
+                }
+                result[rows.Length] = aggregateRow;
+                rows = result;
+                return rowsFound;
+            }
+        }//end class
+        public class AggregateHolston
+        {
+
+            //will have method to parce CovidDataSet and CovidDeathsDataSet and append a line for Holston
+            //list comes from https://www.holston.org/plans-for-in-person-worship
+            Tuple<string, string>[] locations = new Tuple<string, string>[]
+            {
+                    //ballad va
+                new Tuple<string, string>("Lee", "Virginia"),
+                new Tuple<string, string>("Wise", "Virginia"),
+                new Tuple<string, string>("Scott", "Virginia"),
+                new Tuple<string, string>("Dickenson", "Virginia"),
+                new Tuple<string, string>("Buchanan", "Virginia"),
+                new Tuple<string, string>("Russell", "Virginia"),
+                new Tuple<string, string>("Washington", "Virginia"),
+                new Tuple<string, string>("Tazewell", "Virginia"),
+                new Tuple<string, string>("Smyth", "Virginia"),
+                new Tuple<string, string>("Bristol", "Virginia"),
+                //ballad border:
+                new Tuple<string, string>("Bland", "Virginia"),
+                new Tuple<string, string>("Wythe", "Virginia"),
+                new Tuple<string, string>("Grayson", "Virginia"),
+                //ballad tn
+                new Tuple<string, string>("Johnson", "Tennessee"),
+                new Tuple<string, string>("Sullivan", "Tennessee"),
+                new Tuple<string, string>("Carter", "Tennessee"),
+                new Tuple<string, string>("Hawkins", "Tennessee"),
+                new Tuple<string, string>("Washington", "Tennessee"),
+                new Tuple<string, string>("Unicoi", "Tennessee"),
+                new Tuple<string, string>("Greene", "Tennessee"),
+                new Tuple<string, string>("Hancock", "Tennessee"),
+                //ballad border:
+                new Tuple<string, string>("Hamblen", "Tennessee"),
+                //appalachian all in ballad
+                //clinch mountain all in ballad
+                    //hiwassee
+                new Tuple<string, string>("Bradley", "Tennessee"),
+                new Tuple<string, string>("McMinn", "Tennessee"),
+                new Tuple<string, string>("Meigs", "Tennessee"),
+                new Tuple<string, string>("Monroe", "Tennessee"),
+                new Tuple<string, string>("Polk", "Tennessee"),
+                new Tuple<string, string>("Rhea", "Tennessee"),
+                //mountain view
+                new Tuple<string, string>("Claiborne", "Tennessee"),
+                new Tuple<string, string>("Cocke", "Tennessee"),
+                new Tuple<string, string>("Grainger", "Tennessee"),
+                //greene
+                //hamblen
+                //hancock
+                //hawkins
+                new Tuple<string, string>("Jefferson", "Tennessee"),
+                new Tuple<string, string>("Sevier", "Tennessee"),
+                // new river
+                //bland
+                new Tuple<string, string>("Carroll", "Virginia"),
+                new Tuple<string, string>("Floyd", "Virginia"),
+                new Tuple<string, string>("Giles", "Virginia"),
+                //grayson
+                new Tuple<string, string>("Montgomery", "Virginia"),
+                new Tuple<string, string>("Pulaski", "Virginia"),
+                //tazewell
+                //wythe
+                new Tuple<string, string>("Galax", "Virginia"),
+                new Tuple<string, string>("Radford", "Virginia"),
+                //scenic south
+                new Tuple<string, string>("Catoosa", "Georgia"),
+                new Tuple<string, string>("Dade", "Georgia"),
+                new Tuple<string, string>("Walker", "Georgia"),
+                new Tuple<string, string>("Bledsoe", "Tennessee"),
+                new Tuple<string, string>("Hamilton", "Tennessee"),
+                new Tuple<string, string>("Marion", "Tennessee"),
+                new Tuple<string, string>("Sequatchie", "Tennessee"),
+                //smoky mountain
+                new Tuple<string, string>("Blount", "Tennessee"),
+                new Tuple<string, string>("Knox", "Tennessee"),
+                new Tuple<string, string>("Loudon", "Tennessee"),
+                new Tuple<string, string>("Monroe", "Tennessee"),
+                new Tuple<string, string>("Roane", "Tennessee"),
+                new Tuple<string, string>("Sevier", "Tennessee"),
+                //tennessee valley
+                new Tuple<string, string>("Anderson", "Tennessee"),
+                new Tuple<string, string>("Campbell", "Tennessee"),
+                new Tuple<string, string>("Claiborne", "Tennessee"),
+                //knox again
+                //loudon again
+                new Tuple<string, string>("Morgan", "Tennessee"),
+                //roane again
+                new Tuple<string, string>("Scott", "Tennessee"),
+                new Tuple<string, string>("Union", "Tennessee")
+                //three rivers all in ballad
+            };
+
+
+            /// <summary>
+            /// parse rows to make an aggregate row of the rows containing matching place and subPlace 
+            /// and append that aggregate row to the array of rows, then return the number of matching
+            /// rows found.
+            /// </summary>
+            /// <param name="placeIX">index of col containing place (eg country or state) or int.MinValue to match all</param>
+            /// <param name="rows">the data rows we parce and append the aggregate row to</param>
+            /// <param name="subPlaceIX">index of col contining the subplace (eg city or county) or int.MinValue to match all</param>
+            /// <param name="firstDataColIX">index of first column containing counts data</param>
+            /// <returns></returns>
+            public int AppendAggregate(ref string[][] rows,
+            int placeIX,
+            int subPlaceIX,
+            int firstDataColIX)
+            {
+                int rowsFound = 0;
+                bool foundMatch = false;
+                double[] aggregateNumbers = new double[rows[0].Length - firstDataColIX];
+                //doubles should have initialized as zero but leave nothing to chance
+                for (int i = 0; i < aggregateNumbers.Length; i++)
+                {
+                    aggregateNumbers[i] = 0;
+                }
+                string[] aggregateRow = new string[rows[0].Length];
+                aggregateRow[placeIX] = "Holston Conference";
+                aggregateRow[subPlaceIX] = string.Empty;
+
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    foundMatch = false;
+                    for (int j = 0; j < locations.Length; j++)
+                    {
+                        if ((subPlaceIX == int.MinValue) || ((rows[i][subPlaceIX]).Trim().ToLower() == locations[j].Item1.Trim().ToLower()))
+                        {
+                            if ((placeIX == int.MinValue) || (rows[i][placeIX].Trim().ToLower() == locations[j].Item2.Trim().ToLower()))
+                            {
+                                foundMatch = true;
+                                rowsFound++;
+                                break;
+                            }
+                        }
+                    }
+                    if (foundMatch)
+                    {
+                        //add that row's numbers to aggregate
+                        double x;
+                        for (int j = 0; j < aggregateNumbers.Length; j++)
+                        {
+                            if (double.TryParse(rows[i][j + firstDataColIX], out x))
+                            {
+                                aggregateNumbers[j] += x;
+                            }
+                            else
+                            {
+                                //debugging
+                                MessageBox.Show("oops, couldn't parse in row " + i.ToString() + " col " + (j + firstDataColIX).ToString());
+                            }
+                        }
+                        //got here
+                    }//from if found match
+                }//from for each row
+                //now append the new aggreegate row
+                for (int j = 0; j < aggregateNumbers.Length; j++)
+                {
+                    aggregateRow[j + firstDataColIX] = aggregateNumbers[j].ToString();
+                }
+                string[][] result = new string[rows.Length + 1][];
+                for (int i = 0; i < rows.Length; i++)
                 {
                     result[i] = rows[i];
                 }

@@ -146,6 +146,7 @@ namespace Covid19DoublingTime
                             i));
                     }
                     ignoreChangeEvents = false;
+                    //go to default place
                     if(comboBoxPlaces.Items.Count > 0)
                     {
                         bool foundIt = false;
@@ -227,12 +228,16 @@ namespace Covid19DoublingTime
                 statusStrip1.Items[0].Text = sb.ToString();
                 //MessageBox.Show(sb.ToString());
             }//using
-             //append Ballad if this is states data
+             //append Ballad and Holston if this is states data
             if (datafilename == MainClass.DataFileNameForStates)
             {
                 MainClass.AggregateBallad agg = new MainClass.AggregateBallad();
                 int rowsFound = agg.AppendAggregate(ref MainClass.CovidDataSet, 6, 5, 11);
                 string s = rowsFound.ToString();
+
+                MainClass.AggregateHolston agg1 = new MainClass.AggregateHolston();
+                rowsFound = agg1.AppendAggregate(ref MainClass.CovidDataSet, 6, 5, 11);
+                s = rowsFound.ToString();
             }
             //and deaths data into deaths data set
             if ((!string.IsNullOrEmpty(deathsDataFileName)) && File.Exists(deathsDataFileName))
@@ -272,6 +277,8 @@ namespace Covid19DoublingTime
                 {
                     MainClass.AggregateBallad agg = new MainClass.AggregateBallad();
                     int rowsFound = agg.AppendAggregate(ref MainClass.CovidDeathsDataSet, 6, 5, 11); //11 is population
+                    MainClass.AggregateHolston agg1 = new MainClass.AggregateHolston();
+                    rowsFound = agg1.AppendAggregate(ref MainClass.CovidDeathsDataSet, 6, 5, 11); 
                     //string s = rowsFound.ToString();
                 }
             }//if not null deathsdatafilename
@@ -472,7 +479,7 @@ namespace Covid19DoublingTime
                         double[] newDeathsRow = null; //unless created
 
                         //calculate
-                        newDeathsRow = null;
+                        //newDeathsRow = null;
                         if(deathsRow!= null)
                         {
                             newDeathsRow = new double[deathsRow.Length];
@@ -789,7 +796,7 @@ namespace Covid19DoublingTime
                         {
                             //s4.Points.AddXY(i, doublingRow[i]);
                             //pt = new DataPoint(i, doublingRow[i]);
-                            pt = new DataPoint(i, (doublingRow[i] >= 0 && doublingRow[i] <= 29) ? doublingRow[i] : 29);
+                            pt = new DataPoint(i, (doublingRow[i] >= 0 && doublingRow[i] <= 49) ? doublingRow[i] : 49);
                             pt.AxisLabel = stringHeaderRow[i + firstDataColIX];
                             s4.Points.Add(pt);
                         }
@@ -820,7 +827,7 @@ namespace Covid19DoublingTime
                         {
                             //display -1 for out of range
                             //s6.Points.AddXY(i, (doublingExpRow[i] >= 0 && doublingExpRow[i] <= 30) ? doublingExpRow[i] : -1);
-                            pt = new DataPoint(i, (doublingExpRow[i] >= 0 && doublingExpRow[i] <= 29) ? doublingExpRow[i] : 29);
+                            pt = new DataPoint(i, (doublingExpRow[i] >= 0 && doublingExpRow[i] <= 49) ? doublingExpRow[i] : 49);
                             pt.AxisLabel = stringHeaderRow[i + firstDataColIX];
                             s6.Points.Add(pt);
                             //s7.Points.AddXY(i, reproRateExpRow[i]);

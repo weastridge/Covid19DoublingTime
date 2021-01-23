@@ -57,11 +57,12 @@ namespace Covid19DoublingTime
             {
                 try
                 {
-                    //sorry, but we can't allow chart to be closed because for some unknown
-                    // reason, whenever the form is closed, any subsequent drawing of the
-                    // same chart causes an Internal List error within DataVisualization...
-                    MessageBox.Show("Chart will close when the main program is closed, " +
-                        "but can hide the box now." );
+                    ////sorry, but we can't allow chart to be closed because for some unknown
+                    //// reason, whenever the form is closed, any subsequent drawing of the
+                    //// same chart causes an Internal List error within DataVisualization...
+                    //MessageBox.Show("Chart will close when the main program is closed, " +
+                    //    "but can hide the box now." );
+                    this.WindowState = FormWindowState.Minimized;
                     e.Cancel = true;
                 }
                 catch (Exception er)
